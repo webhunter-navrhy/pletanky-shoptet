@@ -925,3 +925,17 @@ html.wh .search-whisperer [class*=availability],html.wh .search-whisperer .avail
 html.wh .search-whisperer{max-height:70vh;overflow:auto}
 html.wh body.type-search h1 strong,html.wh body.type-search h1 span,html.wh body.type-search .content h1 *{color:var(--accent)!important}
 html.wh body.type-search h1{font-weight:300;font-size:32px;margin:8px 0 24px}
+/* záložky detailu: bez přetékání a šedého tlačítka šablony */
+html.wh .shp-tabs-wrapper>.row{margin:0!important}
+html.wh .shp-tabs-row,html.wh .shp-tabs-holder{padding:0!important;margin:0!important;width:auto!important}
+html.wh .shp-tabs-row .navigation-btn{display:none!important}
+html.wh .shp-tabs.visible-links{width:auto!important}
+html.wh .shp-tabs-wrapper .tab-pane{padding:0!important}
+/* Zeptat se / Hlídat / Sdílet: tišeji */
+html.wh .p-detail .link-icons{gap:20px;justify-content:flex-start;margin:20px 0 0}
+html.wh .p-detail .link-icons .link-icon{font-size:12px;letter-spacing:.08em;color:var(--muted);flex-direction:row;gap:6px;padding:0;width:auto}
+html.wh .p-detail .link-icons .link-icon::before{font-size:16px;margin:0}
+html.wh .p-detail .link-icons .link-icon:hover{color:var(--accent)}
+html.wh .shp-tabs-wrapper .description-inner{padding:0!important}
+html.wh .shp-tabs-wrapper .basic-description h3{margin:0 0 12px!important;font-weight:400;font-size:22px}
+@media (max-width:760px){html.wh .p-detail .link-icons{justify-content:space-between}}
