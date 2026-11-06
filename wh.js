@@ -131,7 +131,7 @@
   function logoHtml(tag) { return '<' + (tag || 'a') + ' class="logo" href="/"><img src="' + esc(logoSrc) + '" alt="Pletánky.cz"></' + (tag || 'a') + '>'; }
 
   /* ---------- popisky produktů: složení / návin / jehlice ---------- */
-  var KEYS = /(Složení|Hmotnost klubíčka|Hmotnost|Váha\s*\/\s*návin|Váha|Návin|Délka|Doporučená síla jehlic|Síla jehlic|Doporučená velikost háčku|Doporučená síla háčku|Velikost háčku|Skupina přízí|Zkušební vzorek|Instagram)\s*:\s*/gi;
+  var KEYS = /(Složení|Hmotnost klubíčka|Hmotnost|Váha\s*\/\s*návin|Váha|Návin|Délka|Doporučená síla jehlic|Doporučená velikost jehlic|Síla jehlic|Velikost jehlic|Jehlice\s*\/\s*háček|Jehlice|Doporučená velikost háčku|Doporučená síla háčku|Síla háčku|Velikost háčku|Háček|Skupina přízí|Zkušební vzorek|Instagram)\s*:\s*/gi;
   function norm(k) {
     k = k.toLowerCase().replace(/\s+/g, ' ');
     if (k.indexOf('složení') === 0) return 's';
@@ -148,13 +148,14 @@
     t = String(t || '').replace(/ /g, ' ');
     var trunc = /(\.\.\.|…)\s*$/.test(t);
     t = t.replace(/(\.\.\.|…)\s*$/, '');
-    var m, hits = [], out = { lead: '', v: {}, trunc: trunc };
+    var m, hits = [], out = { lead: '', v: {}, trunc: trunc, extra: '' };
     KEYS.lastIndex = 0;
     while ((m = KEYS.exec(t))) hits.push({ k: norm(m[1]), s: m.index, e: m.index + m[0].length });
     out.lead = (hits.length ? t.slice(0, hits[0].s) : t).replace(/\s+/g, ' ').trim().replace(/[.;:,]+$/, '');
     hits.forEach(function (h, i) {
       var v = t.slice(h.e, i + 1 < hits.length ? hits[i + 1].s : t.length);
-      v = v.split(/\n|;/)[0].replace(/\s+/g, ' ').trim().replace(/[.;,]+$/, '');
+      var parts = v.split(/\n|;/); v = parts[0].replace(/\s+/g, ' ').trim().replace(/[.;,]+$/, '');
+      if (parts.length > 1 && !(trunc && i === hits.length - 1)) { var ex = parts.slice(1).join(' ').replace(/\s+/g, ' ').trim(); if (ex) out.extra += (out.extra ? ' ' : '') + ex; }
       if (h.k === 'x' || !v) return;
       if (trunc && i === hits.length - 1) return; /* poslední hodnota může být useknutá */
       if (!out.v[h.k]) out.v[h.k] = v;
@@ -164,12 +165,13 @@
   }
   function pct(s) { return s.replace(/(\d)\s*%/g, '$1 %').replace(/\s*,\s*(?=\d)/g, ', ').replace(/,(?=\S)/g, ', '); }
   function specRows(v) {
-    var r = [];
-    if (v.s) r.push(['Složení', pct(v.s)]);
-    if (v.wn) r.push(['Váha / návin', v.wn.replace(/\s*gramů/, ' g')]);
-    else if (v.w && v.n) r.push(['Váha / návin', v.w + ' = ' + v.n]);
-    else if (v.w) r.push(['Váha', v.w]); else if (v.n) r.push(['Návin', v.n]);
-    if (v.j) r.push(['Jehlice', v.j]); else if (v.h) r.push(['Háček', v.h]);
+    var r = [], nav = v.wn ? v.wn.replace(/\s*gramů/, ' g') : (v.w && v.n ? v.w + ' = ' + v.n : (v.w || v.n || ''));
+    var nd = v.j && v.h ? v.j + ' / ' + v.h : (v.j || v.h || ''), nl = v.j && v.h ? 'Jehlice / háček' : (v.j ? 'Jehlice' : (v.h ? 'Háček' : 'Jehlice / háček'));
+    if (!(nav || nd)) { if (v.s) r.push(['Složení', pct(v.s)]); return r; }
+    /* vždy stejný rámeček: složení | návin | jehlice nebo háček */
+    r.push(['Složení', v.s ? pct(v.s) : '–']);
+    r.push(['Návin', nav || '–']);
+    r.push([nl, nd || '–']);
     return r;
   }
   function specsHtml(rows, c) {
@@ -577,7 +579,8 @@
       info.insertBefore(head, info.firstChild);
       var h1c = D.createElement('div'); h1c.className = 'whx'; info.insertBefore(h1c, head.nextSibling); h1c.appendChild(h1); h1.classList.add('w-h1', 'w-h1--pd');
       var stw = $('.p-detail-info .stars-wrapper'); if (stw) after(h1c, stw);
-      if (d.lead) { var l = box('<p class="pd__lead">' + esc(d.lead) + '</p>'); after(stw || h1c, l); }
+      var leadAll = (d.lead + (d.lead && d.extra ? ' ' : '') + d.extra).trim();
+      if (leadAll) { var l = box('<p class="pd__lead">' + esc(leadAll) + '</p>'); after(stw || h1c, l); }
       var atc = $('.add-to-cart', info) || $('.p-final-price-wrapper', info);
       var rows = specRows(d.v);
       if (d.v.g) rows.push(['Skupina', d.v.g]);

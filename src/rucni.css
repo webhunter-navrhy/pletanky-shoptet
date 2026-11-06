@@ -332,3 +332,27 @@ html.wh .variant-table .w-btn--var::before{display:none}
 @media (min-width:761px){html.wh .whx .w-banner__box p{max-width:470px}}
 /* mobil hero: celý šálek s eukalyptem, bez tmavého pruhu dole */
 @media (max-width:760px){html.wh .whx .w-banner__img{object-position:50% 40%}}
+
+/* === 6. 11. 2026 – úpravy po zpětné vazbě klientky === */
+/* menu: podkategorie bez obrázků = přehledné odkazy ve sloupcích, ne slepené do řádku */
+html.wh .whx .w-mega__links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 32px;align-content:start}
+html.wh .whx .w-mega__links a{display:block;padding:7px 0;font-size:15px;line-height:1.35;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+html.wh .whx .w-mega__links a:hover{color:var(--accent)}
+/* vyhledávání jako ve schváleném návrhu: zaoblené pole, bez tlačítka Hledat (hledá se Enterem / lupou) */
+html.wh .whx .w-search,html.wh #formSearchForm.w-search{border-radius:var(--r);overflow:visible;background:var(--search-bg)}
+html.wh .whx .w-search input.query-input,html.wh .whx .w-search input[type=search],html.wh .whx .w-search input[type=text]{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:var(--r)}
+html.wh .whx .w-search .btn,html.wh .whx .w-search button[type=submit],html.wh .whx .w-search .search-button,html.wh #formSearchForm.w-search .btn{display:none!important}
+/* zaoblení tlačítek a polí jako ve schváleném návrhu */
+html.wh .btn,html.wh .btn.btn-primary,html.wh .btn.btn-conversion,html.wh .btn.btn-cart,html.wh .btn.btn-secondary,html.wh .next-step-button,html.wh #submit-order,html.wh .add-to-cart-button,html.wh .siteCookies .btn,html.wh .w-news__native button,html.wh .w-news__native input[type=email],html.wh .w-news__native input[type=text],html.wh .variant-submit button{border-radius:var(--r)!important}
+html.wh :is(input[type=text],input[type=email],input[type=tel],input[type=password],input[type=search],input[type=number],select,textarea).form-control,html.wh .form-control,html.wh .detail-parameters select,html.wh .quantity,html.wh .quantity input{border-radius:var(--r)}
+/* navštívené produkty: menší dlaždice než v katalogu */
+html.wh .dkLabVisitedProducts.products{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px 16px}
+html.wh .dkLabVisitedProducts .product{max-width:200px!important}
+html.wh .dkLabVisitedProductsBox h2{font-size:15px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;margin:40px 0 16px}
+html.wh .dkLabVisitedProducts .w-pc__more,html.wh .dkLabVisitedProducts .w-pc__specs{display:none!important}
+html.wh .dkLabVisitedProducts .w-pc__name,html.wh .dkLabVisitedProducts .w-pc a.w-pc__name{font-size:13px}
+/* parametry: vždy stejný rámeček – složení | návin | jehlice/háček */
+html.wh .whx .w-specs--pd{grid-template-columns:repeat(3,minmax(0,1fr))}
+html.wh .whx .w-specs--pd div{border-top:0!important;border-left:1px solid var(--line)!important;padding:10px 14px}
+html.wh .whx .w-specs--pd div:first-child{border-left:0!important}
+@media(max-width:700px){html.wh .whx .w-specs--pd{grid-template-columns:1fr}html.wh .whx .w-specs--pd div{border-left:0!important;border-top:1px solid var(--line)!important}html.wh .whx .w-specs--pd div:first-child{border-top:0!important}html.wh .whx .w-mega__links{grid-template-columns:1fr 1fr}}
