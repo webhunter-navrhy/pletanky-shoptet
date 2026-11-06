@@ -959,3 +959,4 @@ html.wh .variant-table .w-btn--var::before{display:none}
   html.wh .variant-table .variant-name-wrapper{flex-basis:100%}
   html.wh .variant-table .table-col.price{text-align:left;margin-right:auto}
 }
+@media (min-width:761px){html.wh .whx .w-banner__box p{max-width:470px}}
