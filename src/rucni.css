@@ -239,8 +239,8 @@ html.wh .search-whisperer{z-index:300;border-radius:0;border:1px solid var(--lin
   html.wh .p-info-wrapper .add-to-cart .add-to-cart-button{padding:0 14px}
 }
 /* logo klientky (obrázek) místo textového loga z návrhu */
-html.wh .whx .w-logo img{height:64px;width:auto;max-width:none;transition:height .3s}
-html.wh .whx .w-hdr.w-is-stuck .w-logo img{height:50px}
+html.wh .whx .w-logo img{height:72px;width:auto;max-width:none;transition:height .3s}
+html.wh .whx .w-hdr.w-is-stuck .w-logo img{height:56px}
 html.wh .whx .w-ftr__brand .w-logo img{height:72px}
 @media (max-width:900px){html.wh .whx .w-logo img,html.wh .whx .w-hdr.w-is-stuck .w-logo img{height:44px}}
 /* filtry: bez šedého boxu, barvy jako čtverečky z návrhu */
@@ -330,3 +330,5 @@ html.wh .variant-table .w-btn--var::before{display:none}
   html.wh .variant-table .table-col.price{text-align:left;margin-right:auto}
 }
 @media (min-width:761px){html.wh .whx .w-banner__box p{max-width:470px}}
+/* mobil hero: celý šálek s eukalyptem, bez tmavého pruhu dole */
+@media (max-width:760px){html.wh .whx .w-banner__img{object-position:50% 40%}}

@@ -497,7 +497,7 @@
       $$('p', cl).forEach(function (p) { p.append('\n'); });
       var d = parseDesc(cl.textContent); v = d.v;
       var ps = $$('p', per).filter(function (p) { return !/:/.test(txt(p).slice(0, 40)) && !p.querySelector('img') && !p.querySelector('a') && txt(p).length > 40; });
-      lead = ps.length ? txt(ps[0]) : d.lead;
+      lead = ps.length ? (function (p) { var c = p.cloneNode(true); $$('br', c).forEach(function (b) { b.replaceWith(' '); }); return txt(c); })(ps[0]) : d.lead;
       lead = lead.split(/(?<=[.!?])\s+/).reduce(function (acc, s) { return acc.length < 160 ? (acc ? acc + ' ' : '') + s : acc; }, '');
       var im = per.querySelector('img'); if (im) pimg = imgOf(im);
     }
