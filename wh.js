@@ -139,7 +139,7 @@
     if (k.indexOf('hmotnost') === 0 || k === 'váha') return 'w';
     if (k === 'návin' || k === 'délka') return 'n';
     if (k.indexOf('jehlic') > -1) return 'j';
-    if (k.indexOf('háčk') > -1) return 'h';
+    if (k.indexOf('háč') > -1) return 'h';
     if (k.indexOf('skupina') === 0) return 'g';
     if (k.indexOf('zkušební') === 0) return 'v';
     return 'x';
