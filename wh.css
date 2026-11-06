@@ -933,9 +933,29 @@ html.wh .shp-tabs.visible-links{width:auto!important}
 html.wh .shp-tabs-wrapper .tab-pane{padding:0!important}
 /* Zeptat se / Hlídat / Sdílet: tišeji */
 html.wh .p-detail .link-icons{gap:20px;justify-content:flex-start;margin:20px 0 0}
-html.wh .p-detail .link-icons .link-icon{font-size:12px;letter-spacing:.08em;color:var(--muted);flex-direction:row;gap:6px;padding:0;width:auto}
+html.wh .p-detail .link-icons .link-icon{display:inline-flex;align-items:center;font-size:12px;letter-spacing:.08em;color:var(--muted);flex-direction:row;gap:6px;padding:0;width:auto}
 html.wh .p-detail .link-icons .link-icon::before{font-size:16px;margin:0}
 html.wh .p-detail .link-icons .link-icon:hover{color:var(--accent)}
 html.wh .shp-tabs-wrapper .description-inner{padding:0!important}
 html.wh .shp-tabs-wrapper .basic-description h3{margin:0 0 12px!important;font-weight:400;font-size:22px}
 @media (max-width:760px){html.wh .p-detail .link-icons{justify-content:space-between}}
+/* tabulka variant na detailu */
+html.wh .variant-table{border-top:1px solid var(--line);margin:0!important;max-width:none}
+html.wh .variant-table .table-row{display:flex!important;align-items:center;gap:12px 20px;padding:16px 0;margin:0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+html.wh .variant-table .table-row::before,html.wh .variant-table .table-row::after{display:none}
+html.wh .variant-table .table-col{float:none;width:auto;padding:0;min-height:0}
+html.wh .variant-table .variant-name-wrapper{flex:1 1 240px;font-size:14px;color:var(--muted)}
+html.wh .variant-table .variant-name{font-size:16px;color:var(--ink);margin-bottom:4px}
+html.wh .variant-table .table-col.price{flex:none;text-align:right}
+html.wh .variant-table .price-final{font-size:18px;color:var(--accent);font-weight:500}
+html.wh .variant-table .price-additional{font-size:12px;color:var(--muted)}
+html.wh .variant-table .table-col.cart{flex:none;min-width:max-content}
+html.wh .variant-table .table-col.price{min-width:max-content}
+html.wh .variant-table .variant-submit fieldset{display:flex;gap:10px;align-items:stretch;margin:0;padding:0;border:0}
+html.wh .variant-table .quantity{margin:0}
+html.wh .variant-table .w-btn--var{height:48px;padding:0 18px;font-size:12px;letter-spacing:.08em;width:auto;min-width:0;background-image:none}
+html.wh .variant-table .w-btn--var::before{display:none}
+@media (max-width:760px){
+  html.wh .variant-table .variant-name-wrapper{flex-basis:100%}
+  html.wh .variant-table .table-col.price{text-align:left;margin-right:auto}
+}

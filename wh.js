@@ -585,8 +585,11 @@
       if (atc) after(atc, extra); else info.appendChild(extra);
       if (sdEl && rows.length) sdEl.classList.add('w-sd-hidden');
     }
-    var btn = $('.add-to-cart-button');
-    if (btn) { btn.classList.add('w-btn', 'w-btn--cart', 'w-btn--buy'); btn.innerHTML = W(svg('ico--sm', P.bag)) + '<span>Do košíku</span>'; }
+    $$('.add-to-cart-button', det).forEach(function (btn) {
+      var v = !!btn.closest('.variant-table');
+      btn.classList.add('w-btn', 'w-btn--cart', v ? 'w-btn--var' : 'w-btn--buy'); btn.innerHTML = W(svg('ico--sm', P.bag)) + '<span>Do košíku</span>';
+    });
+    if ($('.variant-table', det)) det.classList.add('w-has-vars');
     var hdTop = $('.p-detail-inner-header'); if (hdTop && !hdTop.querySelector('h1')) hdTop.classList.add('w-empty');
     /* související produkty */
     var rel = $('.products-related');
@@ -601,7 +604,7 @@
     var cat = cr.items.length > 1 ? cr.items[cr.items.length - 2] : null;
     if (cat && cat.h && cat.h !== '/' && info) run('swatches', function () { swatches(cat.h, info, h1); });
     if (cat && cat.h && cat.h !== '/') {
-      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">Další odstíny</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
+      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">' + (/^příze/i.test(txt(h1)) ? 'Další odstíny' : 'Další z kategorie') + '</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
       var anchor = tabs || rel || det;
       after(anchor, holder);
       var me = location.pathname;
@@ -643,10 +646,11 @@
       var list = [{ h: me, n: myName, i: (mine && mine.i) || meImg, on: 1 }].concat(others.slice(0, CONFIG.swatchMax - 1));
       var rest = tot - 1;
       var inner = slot.firstChild;
-      inner.innerHTML = W('<p>Odstín: <b>' + esc(shade(myName)) + '</b>' + (rest > 0 ? ' <span>· ' + (rest === 1 ? 'další 1 odstín' : rest < 5 ? 'další ' + rest + ' odstíny' : 'dalších ' + rest + ' odstínů') + '</span>' : '') + '</p>' +
+      var yarn = /^příze/i.test(myName);
+      inner.innerHTML = W('<p>' + (yarn ? 'Odstín' : 'Varianta') + ': <b>' + esc(shade(myName)) + '</b>' + (rest > 0 ? ' <span>· ' + (yarn ? (rest === 1 ? 'další 1 odstín' : rest < 5 ? 'další ' + rest + ' odstíny' : 'dalších ' + rest + ' odstínů') : (rest === 1 ? 'další 1 varianta' : rest < 5 ? 'další ' + rest + ' varianty' : 'dalších ' + rest + ' variant')) + '</span>' : '') + '</p>' +
         '<div class="pswatches">' + list.map(function (x) {
           return '<a class="pswatch' + (x.on ? ' is-on' : '') + '" href="' + esc(x.h) + '" title="' + esc(shade(x.n)) + '"' + (x.on ? ' aria-current="true"' : '') + '><img src="' + esc(x.i) + '" alt="' + esc(shade(x.n)) + '" loading="lazy"></a>';
-        }).join('') + (rest > list.length - 1 ? '<a class="pswatch pswatch--more" href="' + esc(catUrl) + '" title="Všechny odstíny">+' + (rest - list.length + 1) + '</a>' : '') + '</div>');
+        }).join('') + (rest > list.length - 1 ? '<a class="pswatch pswatch--more" href="' + esc(catUrl) + '" title="Všechny varianty">+' + (rest - list.length + 1) + '</a>' : '') + '</div>');
       inner.removeAttribute('hidden');
     }).catch(function () { slot.remove(); });
   }
