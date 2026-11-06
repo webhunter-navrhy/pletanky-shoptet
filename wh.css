@@ -986,3 +986,4 @@ html.wh .whx .w-specs--pd{grid-template-columns:repeat(3,minmax(0,1fr))}
 html.wh .whx .w-specs--pd div{border-top:0!important;border-left:1px solid var(--line)!important;padding:10px 14px}
 html.wh .whx .w-specs--pd div:first-child{border-left:0!important}
 @media(max-width:700px){html.wh .whx .w-specs--pd{grid-template-columns:1fr}html.wh .whx .w-specs--pd div{border-left:0!important;border-top:1px solid var(--line)!important}html.wh .whx .w-specs--pd div:first-child{border-top:0!important}html.wh .whx .w-mega__links{grid-template-columns:1fr 1fr}}
+html.wh .whx .w-btn,html.wh .w-btn,html.wh .whx .w-chip{border-radius:var(--r)!important}
