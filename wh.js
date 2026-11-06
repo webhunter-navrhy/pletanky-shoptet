@@ -329,7 +329,9 @@
       sf.classList.add('w-search');
       sf.insertAdjacentHTML('afterbegin', W(svg('ico--sm', P.search)));
       var inp = sf.querySelector('input[name=string]'); if (inp) inp.placeholder = 'Hledat přízi, odstín, značku…';
-      slot.replaceWith(sf);
+      /* Shoptet zapíná našeptávač jen pro formulář uvnitř .search */
+      var sw = D.createElement('div'); sw.className = 'search w-search-wrap'; slot.replaceWith(sw); sw.appendChild(sf);
+      if (!sf.querySelector('.search-whisperer') && window.fulltextSearch && window.jQuery && jQuery.isReady) { try { var $i = jQuery(sf).find('input.query-input'); $i.after('<div class="search-whisperer"></div>'); fulltextSearch($i, jQuery(sw).find('.search-whisperer')); } catch (e) {} }
     } else slot.remove();
     /* košík */
     var cb = h.querySelector('.w-cartbtn');

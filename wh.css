@@ -848,6 +848,8 @@ html.wh .search-whisperer{z-index:300;border-radius:0;border:1px solid var(--lin
   html.wh body.type-category .content-wrapper-in{grid-template-columns:minmax(0,1fr);gap:0}
   html.wh body.type-category .sidebar{position:fixed;inset:auto 0 0 0;top:auto;max-height:86vh;z-index:400;background:#fff;padding:0 20px 20px!important;transform:translateY(105%);transition:transform .35s var(--ease);box-shadow:0 -10px 40px rgba(0,0,0,.18);overflow:auto;display:block!important}
   html.wh body.type-category.w-filt-open .sidebar{transform:none}
+  html.wh body.type-category .sidebar .sidebar-inner{display:block!important}
+  html.wh body.type-category .sidebar .sidebar-inner>*:not(.box-filters){display:none!important}
   html.wh body.type-category.w-filt-open .w-filt-bg{display:block;position:fixed;inset:0;z-index:399;background:rgba(43,34,38,.4)}
   html.wh .whx .w-filters__head{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;padding:16px 0;z-index:2;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
   html.wh .whx .w-filters__head button{width:40px;height:40px;display:grid;place-items:center}
@@ -896,3 +898,30 @@ html.wh .whx .w-pd__swh{margin:4px 0 18px}
 html.wh .whx .w-pswatch--more{display:grid;place-items:center;font-size:12px;color:var(--muted);letter-spacing:.04em;text-decoration:none}
 html.wh .whx .w-pd__usp a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 html.wh .whx .w-pd__usp .w-ico{flex:none}
+/* mobil: nic nesmí rozšířit stránku */
+html.wh,html.wh body{overflow-x:clip}
+html.wh .w-news__native,html.wh .w-news__native *{max-width:100%;min-width:0;box-sizing:border-box}
+html.wh .whx .w-btn,html.wh .w-btn{border-radius:0}
+/* košík a pokladna: modrou ze šablony nahradit barvou návrhu */
+html.wh .cart-header .step-1 strong,html.wh .cart-header .step-1 strong *,html.wh .cart-header .step.active strong,html.wh .extra.delivery strong,html.wh .advanced-order .extra.delivery strong,html.wh .cart-content a:not(.btn):not(.w-btn){color:var(--accent)!important}
+html.wh .cart-header .step-1 strong::before,html.wh .cart-header .step.active strong::before{border-color:var(--accent)!important;color:var(--accent)!important}
+html.wh .cart-header .step-1,html.wh .cart-header .step.active{border-color:var(--accent)!important}
+html.wh .price-range>div{background:var(--accent)!important}
+html.wh .cart-header .step.active strong{border-bottom-color:var(--accent)!important}
+html.wh .co-box h2.order-icon::before{color:var(--accent)!important}
+html.wh .radio-wrapper.active>label::before{border-color:var(--accent)!important}
+html.wh .radio-wrapper.active>label::after{background-color:var(--accent)!important}
+html.wh .radio-wrapper.active .shipping-billing-name,html.wh .radio-wrapper.active .payment-shipping-price,html.wh .recapitulation-shipping-billing-info span,html.wh .co-box .payment-shipping-price.for-free{color:var(--accent)!important}
+html.wh .question-tooltip{background-color:var(--accent)!important;border-color:var(--accent)!important}
+html.wh .ordering-process .order-summary-inner hr,html.wh .ordering-process .recapitulation-single,html.wh .ordering-process [class*="price-wrapper"]{border-color:var(--line)}
+html.wh .order-summary-inner{padding:20px!important}
+html.wh .order-summary-item.price{border-top:1px solid var(--accent)!important}
+html.wh .w-search-wrap{display:contents}
+html.wh .whx .w-search,html.wh #formSearchForm.w-search{position:relative}
+/* našeptávač a výsledky hledání */
+html.wh .search-whisperer a{color:var(--ink)!important}
+html.wh .search-whisperer a:hover,html.wh .search-whisperer a:hover *{color:var(--accent)!important}
+html.wh .search-whisperer [class*=availability],html.wh .search-whisperer .availability{color:var(--green)!important}
+html.wh .search-whisperer{max-height:70vh;overflow:auto}
+html.wh body.type-search h1 strong,html.wh body.type-search h1 span,html.wh body.type-search .content h1 *{color:var(--accent)!important}
+html.wh body.type-search h1{font-weight:300;font-size:32px;margin:8px 0 24px}
