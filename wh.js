@@ -612,9 +612,10 @@
     /* související produkty */
     var rel = $('.products-related');
     var relH = $('.products-related-header');
+    var rh = null;
     if (relH) {
       relH.classList.add('w-relh');
-      var rh = box('<div class="sh sh--rel"><h2 class="h2">' + esc(txt(relH) || 'Související produkty') + '</h2></div>');
+      rh = box('<div class="sh sh--rel"><h2 class="h2">' + esc(txt(relH) || 'Související produkty') + '</h2></div>');
       relH.parentNode.insertBefore(rh, relH); relH.style.display = 'none';
       /* šipky do řádku nadpisu (nad dlaždicemi, nikdy je nepřekryje hover karta) */
       var bp = $('.browse-p');
@@ -623,7 +624,7 @@
     /* záložky (popis, parametry, hodnocení) před související produkty jako v návrhu */
     var tabs = $('.shp-tabs-wrapper');
     if (tabs && relH && tabs.parentNode === relH.parentNode && (relH.compareDocumentPosition(tabs) & 4)) {
-      relH.parentNode.insertBefore(tabs, relH);
+      relH.parentNode.insertBefore(tabs, rh || relH);
     }
     /* další odstíny z kategorie */
     var cat = cr.items.length > 1 ? cr.items[cr.items.length - 2] : null;
