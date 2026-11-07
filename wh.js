@@ -65,8 +65,8 @@
     ],
     /* detail produktu pod tlačítkem (jako v návrhu); [ikona, text] */
     /* medailonek na detailu produktu: jméno, text a fotka (img: odkaz na fotku, prázdné = písmeno) – upravitelné zde */
-    medailon: { name: 'Hana', img: '', text: 'Nevíte si rady s výběrem příze nebo množstvím? Napište mi, ráda poradím.' },
-    usps: [['truck', 'Doprava zdarma od 2&nbsp;000&nbsp;Kč'], ['mail', 'Nevíte si rady s množstvím? <a href="mailto:info@pletanky.cz">Napište nám</a>']],
+    medailon: { name: '', img: '', title: 'Potřebujete poradit?', text: 'Napište nám, rádi vám pomůžeme s výběrem, orientační spotřebou a jinými dotazy ohledně tvoření. Na emaily odpovídáme téměř 24/7. Na telefonu jsme k dispozici 8 – 18 h.', email: 'info@pletanky.cz', tel: '799 557 080' },
+    usps: [['truck', 'Doprava zdarma od 2&nbsp;000&nbsp;Kč']],
     swatchMax: 11
   };
 
@@ -121,6 +121,7 @@
     star: '<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>',
     filter: '<path d="M4 6h16M7 12h10M10 18h4"/>',
     mail: '<rect x="3.5" y="6" width="17" height="12"/><path d="m4 7 8 6 8-6"/>',
+    phone: '<path d="M6.5 4h3l1.5 4-2 1.3a10 10 0 0 0 5.7 5.7L16 13l4 1.5v3c0 1-.8 2-2 2C10.8 19.5 4.5 13.2 4.5 6c0-1 .5-2 2-2z"/>',
     ig: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6"/>',
     fb: '<path d="M14 8h2.5V4.5H14c-2.2 0-3.5 1.5-3.5 3.8V10H8v3.5h2.5V20H14v-6.5h2.5L17 10h-3V8.6c0-.4.2-.6.5-.6z"/>'
   };
@@ -179,7 +180,7 @@
     return r;
   }
   function specsHtml(rows, c) {
-    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (r[0] === 'Zkušební vzorek' ? ' class="is-sample"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
+    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (r[0] === 'Zkušební vzorek' ? ' class="is-sample is-wide"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
   }
   function fullDesc(href) {
     var k = 'whd:' + href, c = cacheGet(k, 864e5, 's');
@@ -404,7 +405,7 @@
       tEl.className = 'w-mega__links';
       tEl.innerHTML = rest.splice(0).map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join('');
     }
-    cEl.innerHTML = W((rest.length ? '<p class="mega__h">Další</p>' : '<p class="mega__h">&nbsp;</p>') + rest.map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join(''));
+    cEl.innerHTML = W((rest.length ? '<p class="mega__h">&nbsp;</p>' : '') + rest.map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join(''));
   }
 
   /* ---------- úvodní stránka ---------- */
@@ -570,6 +571,12 @@
     var sd = '';
     if (sdEl) { var cl = sdEl.cloneNode(true); $$('br', cl).forEach(function (b) { b.replaceWith('\n'); }); $$('p', cl).forEach(function (p) { p.append('\n'); }); sd = cl.textContent; }
     var d = parseDesc(sd);
+    var fdEl = $('.shp-tabs-wrapper .basic-description') || $('#description');
+    if (fdEl) {
+      var fc = fdEl.cloneNode(true); $$('br', fc).forEach(function (b) { b.replaceWith('\n'); }); $$('p,div,li', fc).forEach(function (p) { p.append('\n'); });
+      var d2 = parseDesc(fc.textContent);
+      ['v', 'g', 's', 'wn', 'w', 'n', 'j', 'h', 'jh'].forEach(function (k) { if (!d.v[k] && d2.v[k]) d.v[k] = d2.v[k]; });
+    }
     if (info && h1) {
       var head = box('<p class="pd__brand">' + (brand ? (brandA ? '<a href="' + esc(brandA.getAttribute('href')) + '">' + esc(brand) + '</a>' : esc(brand)) : '') + (brand && code ? ' · ' : '') + (code ? 'Kód ' + esc(code) : '') + '</p>');
       info.insertBefore(head, info.firstChild);
@@ -580,7 +587,7 @@
       var atc = $('.add-to-cart', info);
       var pw = $('.p-final-price-wrapper', info), av = $('.availability-value', info);
       var rows = specRows(d.v);
-      if (d.v.g) rows.push(['Skupina', d.v.g]);
+      if (d.v.g) rows.push(['Typ příze', d.v.g]);
       /* pořadí: krátký popis → parametry → varianty → sklad → cena + ks + košík v řadě → doprava zdarma → oblíbené/porovnání → medailonek */
       var anchor = l || stw || h1c;
       if (rows.length) { var sp = box(specsHtml(rows, 'specs specs--pd')); after(anchor, sp); anchor = sp; }
@@ -593,7 +600,7 @@
       after(anchor, usp); anchor = usp;
       var soc = $('.social-buttons-wrapper', info); if (soc) { soc.classList.add('w-soc'); after(anchor, soc); anchor = soc; }
       var m = CONFIG.medailon;
-      if (m) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="' + esc(m.name) + '" loading="lazy">' : '<span class="pd__med-ph">' + esc(m.name.charAt(0)) + '</span>') + '<div><b>' + esc(m.name) + '</b><p>' + esc(m.text) + '</p></div></aside>'); after(anchor, mb); }
+      if (m) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="" loading="lazy">' : '') + '<div><b>' + esc(m.title) + '</b><p>' + esc(m.text) + '</p><p class="pd__med-c"><a href="mailto:' + esc(m.email) + '">' + svg('ico--sm', P.mail) + ' ' + esc(m.email) + '</a><a href="tel:' + esc(m.tel.replace(/\s/g, '')) + '">' + svg('ico--sm', P.phone) + ' ' + esc(m.tel) + '</a></p></div></aside>'); after(anchor, mb); }
       if (sdEl && rows.length) sdEl.classList.add('w-sd-hidden');
     }
     $$('.add-to-cart-button', det).forEach(function (btn) {
@@ -605,7 +612,14 @@
     /* související produkty */
     var rel = $('.products-related');
     var relH = $('.products-related-header');
-    if (relH) relH.classList.add('w-relh');
+    if (relH) {
+      relH.classList.add('w-relh');
+      var rh = box('<div class="sh sh--rel"><h2 class="h2">' + esc(txt(relH) || 'Související produkty') + '</h2></div>');
+      relH.parentNode.insertBefore(rh, relH); relH.style.display = 'none';
+      /* šipky do řádku nadpisu (nad dlaždicemi, nikdy je nepřekryje hover karta) */
+      var bp = $('.browse-p');
+      if (bp) { $$('.p-prev,.p-next', bp).forEach(function (a) { rh.appendChild(a); }); }
+    }
     /* záložky (popis, parametry, hodnocení) před související produkty jako v návrhu */
     var tabs = $('.shp-tabs-wrapper');
     if (tabs && relH && tabs.parentNode === relH.parentNode && (relH.compareDocumentPosition(tabs) & 4)) {

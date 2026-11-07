@@ -412,3 +412,41 @@ html.wh ul.subcategories li a{height:auto!important;align-self:stretch}
 @media (max-width:767px){
 html.wh .w-tiles--orig>*:last-child:nth-child(even){grid-column:1/-1}
 }
+
+/* ---------- 4. kolo (8. 11. 2026) ---------- */
+/* podkategorie: dlouhé rámečky s miniaturou vedle názvu (jako původní Classic) */
+html.wh ul.subcategories{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+html.wh ul.subcategories li a{flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;gap:14px!important;padding:10px 14px!important;min-height:76px;text-align:left!important}
+html.wh ul.subcategories .image{flex:0 0 56px!important;width:56px!important;height:56px!important;display:block!important}
+html.wh ul.subcategories .image img{max-height:56px!important;height:56px!important;width:56px!important}
+html.wh ul.subcategories .text{text-align:left!important;flex:1 1 auto;font-size:15px}
+html.wh ul.subcategories li.w-noimg .image{display:none!important}
+html.wh ul.subcategories li.w-noimg a{min-height:76px}
+@media(max-width:991px){html.wh ul.subcategories{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){html.wh ul.subcategories{grid-template-columns:1fr!important}}
+/* cena u tlačítka: bez čar */
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper{border:0!important;padding:0!important;margin:0!important;align-self:center}
+html.wh .p-info-wrapper .w-buy{align-items:center}
+/* parametry: zkušební vzorek přes dva sloupce, další řádek odděleně */
+html.wh .whx .w-specs--pd div:nth-child(n+4){border-top:1px solid var(--line)!important}
+html.wh .whx .w-specs--pd div.is-wide{grid-column:span 2}
+html.wh .whx .w-specs--pd div.is-wide:nth-child(4){border-left:0!important}
+html.wh .whx .w-specs--pd{margin-bottom:22px}
+@media(max-width:700px){html.wh .whx .w-specs--pd div.is-wide{grid-column:auto}html.wh .whx .w-specs--pd div:nth-child(n+4){border-top:1px solid var(--line)!important}}
+/* medailonek */
+html.wh .w-pd__med{align-items:flex-start}
+html.wh .w-pd__med b{font-size:17px;font-weight:500}
+html.wh .w-pd__med-c{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:10px!important}
+html.wh .w-pd__med-c a{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-size:15px;text-decoration:none}
+html.wh .w-pd__med-c a:hover{color:var(--accent-h)}
+/* související produkty: nadpis jako Další odstíny, šipky v řádku nadpisu */
+html.wh .whx .w-sh--rel{position:relative;margin-top:64px}
+html.wh .w-sh--rel .p-prev,html.wh .w-sh--rel .p-next{position:absolute!important;top:calc(50% - 26px)!important;z-index:30!important;width:40px!important;height:40px!important}
+html.wh .w-sh--rel .p-prev{right:52px!important;left:auto!important}
+html.wh .w-sh--rel .p-next{right:4px!important;left:auto!important}
+@media(max-width:767px){html.wh .w-sh--rel .p-prev{right:48px!important;left:auto!important}html.wh .w-sh--rel .p-next{right:0!important;left:auto!important}}
+/* detail: popis přes celou šířku, parametry vpravo (dvousloupcově) */
+@media(min-width:992px){
+html.wh .shp-tabs-wrapper .tab-content{max-width:none}
+html.wh .shp-tabs-wrapper .tab-pane.active .description-inner,html.wh .shp-tabs-wrapper #description .description-inner{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:0 64px;align-items:start}
+}
