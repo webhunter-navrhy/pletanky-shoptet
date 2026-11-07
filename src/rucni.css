@@ -9,10 +9,24 @@ html.wh body.type-index #content-wrapper,
 html.wh body:is(.type-category,.type-detail) .breadcrumbs-wrapper,
 html.wh body:is(.type-detail,.type-product) .sidebar,
 html.wh .category-top>.category-title,html.wh .category-top>.products-top-wrapper,
-html.wh .category-perex,html.wh .subcategories,
 html.wh .w-sd-hidden,html.wh .w-empty{display:none!important}
-html.wh body.w-perex-open .category-perex{display:block!important;margin:0 0 32px;padding:24px;background:var(--alt);font-size:14px}
-html.wh body.w-perex-open .category-perex img{max-width:220px;height:auto;display:inline-block;margin:6px}
+html.wh .category-perex{display:block!important;margin:0 0 32px;font-size:15px;line-height:1.6;max-height:none!important;overflow:visible!important;-webkit-line-clamp:none!important}
+html.wh .category-perex img{max-width:100%;height:auto}
+html.wh .category-perex a{color:var(--accent-h);text-decoration:underline;pointer-events:auto!important;position:relative;z-index:2}
+html.wh .category-perex .read-more,html.wh .category-perex .show-more{display:none!important}
+html.wh ul.subcategories{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;list-style:none;margin:0 0 28px;padding:0}
+html.wh ul.subcategories li{width:auto!important;float:none!important;padding:0!important;margin:0!important}
+html.wh ul.subcategories li a{display:flex;flex-direction:column;align-items:center;gap:10px;height:100%;padding:14px 10px;border:1px solid var(--line,#e3ddd3);border-radius:10px;background:#fff;text-align:center;color:var(--ink);text-decoration:none}
+html.wh ul.subcategories li a:hover{border-color:var(--ink)}
+html.wh ul.subcategories .image{display:block;width:100%;height:120px}
+html.wh ul.subcategories .image img{width:100%;height:100%;object-fit:contain}
+html.wh ul.subcategories li.w-noimg .image{display:none}
+html.wh ul.subcategories li.w-noimg a{justify-content:center;min-height:64px}
+html.wh ul.subcategories .text{font-size:14px;line-height:1.3}
+html.wh .w-h1--side,html.wh .whx .w-h1--side{font-size:20px;letter-spacing:.04em;margin:0 0 18px;padding:0 0 12px;border-bottom:1px solid var(--line,#e3ddd3)}
+html.wh .whx .w-h1--mob{display:none}
+@media(max-width:991px){html.wh ul.subcategories{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:767px){html.wh ul.subcategories{grid-template-columns:repeat(2,minmax(0,1fr))}html.wh .whx .w-h1--mob{display:block;font-size:24px;margin:0 0 14px}html.wh .whx .w-h1--side{display:none}}
 /* obecné nativní kontejnery */
 html.wh .overall-wrapper{padding:0;background:#fff}
 html.wh #content-wrapper{width:min(1320px,100% - 48px);max-width:none;margin:0 auto;padding:0;background:none}
@@ -336,12 +350,13 @@ html.wh .variant-table .w-btn--var::before{display:none}
 /* === 6. 11. 2026 – úpravy po zpětné vazbě klientky === */
 /* menu: podkategorie bez obrázků = přehledné odkazy ve sloupcích, ne slepené do řádku */
 html.wh .whx .w-mega__links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 32px;align-content:start}
-html.wh .whx .w-mega__links a{display:block;padding:7px 0;font-size:15px;line-height:1.35;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+html.wh .whx .w-mega__links a{display:block;padding:7px 0;font-size:15px;line-height:1.35;color:var(--ink);text-decoration:none}
 html.wh .whx .w-mega__links a:hover{color:var(--accent)}
 /* vyhledávání jako ve schváleném návrhu: zaoblené pole, bez tlačítka Hledat (hledá se Enterem / lupou) */
 html.wh .whx .w-search,html.wh #formSearchForm.w-search{border-radius:var(--r);overflow:visible;background:var(--search-bg)}
 html.wh .whx .w-search input.query-input,html.wh .whx .w-search input[type=search],html.wh .whx .w-search input[type=text]{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:var(--r)}
-html.wh .whx .w-search .btn,html.wh .whx .w-search button[type=submit],html.wh .whx .w-search .search-button,html.wh #formSearchForm.w-search .btn{display:none!important}
+html.wh .whx .w-search .btn,html.wh .whx .w-search button[type=submit],html.wh .whx .w-search .search-button,html.wh #formSearchForm.w-search .btn{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important;padding:0!important;border:0!important}
+html.wh .whx .w-search>.w-ico{cursor:pointer}
 /* zaoblení tlačítek a polí jako ve schváleném návrhu */
 html.wh .btn,html.wh .btn.btn-primary,html.wh .btn.btn-conversion,html.wh .btn.btn-cart,html.wh .btn.btn-secondary,html.wh .next-step-button,html.wh #submit-order,html.wh .add-to-cart-button,html.wh .siteCookies .btn,html.wh .w-news__native button,html.wh .w-news__native input[type=email],html.wh .w-news__native input[type=text],html.wh .variant-submit button{border-radius:var(--r)!important}
 html.wh :is(input[type=text],input[type=email],input[type=tel],input[type=password],input[type=search],input[type=number],select,textarea).form-control,html.wh .form-control,html.wh .detail-parameters select,html.wh .quantity,html.wh .quantity input{border-radius:var(--r)}
@@ -357,3 +372,43 @@ html.wh .whx .w-specs--pd div{border-top:0!important;border-left:1px solid var(-
 html.wh .whx .w-specs--pd div:first-child{border-left:0!important}
 @media(max-width:700px){html.wh .whx .w-specs--pd{grid-template-columns:1fr}html.wh .whx .w-specs--pd div{border-left:0!important;border-top:1px solid var(--line)!important}html.wh .whx .w-specs--pd div:first-child{border-top:0!important}html.wh .whx .w-mega__links{grid-template-columns:1fr 1fr}}
 html.wh .whx .w-btn,html.wh .w-btn,html.wh .whx .w-chip{border-radius:var(--r)!important}
+/* šipky karuselu: nad dlaždicemi, mimo ně, vždy trefitelné */
+html.wh .products-related.p-switchable{overflow:visible}
+html.wh .products-related .p-prev,html.wh .products-related .p-next{z-index:20!important;width:40px!important;height:40px!important;top:calc(50% - 20px)!important;background:#fff!important;border-radius:50%!important;box-shadow:0 2px 10px rgba(0,0,0,.18)!important;pointer-events:auto!important;cursor:pointer}
+html.wh .products-related .p-prev{left:-20px!important;right:auto!important}
+html.wh .products-related .p-next{right:-20px!important;left:auto!important}
+html.wh .products-related .p-prev.inactive{opacity:.35}
+@media(max-width:767px){html.wh .products-related .p-prev{left:2px!important}html.wh .products-related .p-next{right:2px!important}}
+/* slevový kód v košíku: pole + tlačítko jako jeden zaoblený celek */
+html.wh .discount-coupon form.input-group{display:flex!important;align-items:stretch;border:1px solid var(--line,#d9d4cc);border-radius:10px;overflow:hidden;background:#fff;max-width:420px}
+html.wh .discount-coupon form.input-group .form-control{flex:1 1 auto;min-width:0;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;margin:0!important;height:auto}
+html.wh .discount-coupon form.input-group .btn{border:0!important;border-radius:0!important;margin:0!important;flex:0 0 auto}
+/* detail produktu: řada cena + ks + košík, parametry, medailonek */
+html.wh .p-info-wrapper .w-buy{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin:18px 0 6px}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper{margin:0;padding:0;flex:0 0 auto}
+html.wh .p-info-wrapper .w-buy .price-final,html.wh .p-info-wrapper .w-buy .price-final-holder{font-size:30px!important;font-weight:500;line-height:1.1}
+html.wh .p-info-wrapper .w-buy .price-additional{display:block;font-size:13px}
+html.wh .p-info-wrapper .w-buy .add-to-cart{margin:0;flex:1 1 280px;display:flex;align-items:center;gap:12px}
+html.wh .p-info-wrapper .w-buy .add-to-cart .quantity{flex:0 0 auto}
+html.wh .p-info-wrapper .w-buy .add-to-cart-button{flex:1 1 auto}
+html.wh .w-specs--pd .is-sample{background:var(--soft,#f6f1ea)}
+html.wh .w-specs--pd .is-sample dt,html.wh .w-specs--pd .is-sample dd{font-weight:600}
+html.wh .w-soc{margin:10px 0 0}
+html.wh .w-pd__med{display:flex;gap:16px;align-items:center;margin:22px 0 0;padding:16px 18px;border:1px solid var(--line,#e3ddd3);border-radius:12px;background:#fff}
+html.wh .w-pd__med img,html.wh .w-pd__med-ph{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:0 0 64px}
+html.wh .w-pd__med-ph{display:flex;align-items:center;justify-content:center;background:var(--soft,#f1ebe2);font-size:26px}
+html.wh .w-pd__med p{margin:4px 0 0;font-size:14px;line-height:1.5}
+@media(max-width:767px){html.wh .p-info-wrapper .w-buy .add-to-cart{flex-basis:100%}}
+html.wh body.type-category .sidebar-inner>.whx{display:block!important}
+html.wh ul.subcategories li{display:flex!important}
+html.wh ul.subcategories li a{width:100%;position:relative}
+html.wh ul.subcategories li a::after,html.wh ul.subcategories li a::before{display:none!important;content:none!important}
+html.wh ul.subcategories .image{position:static!important;float:none!important;margin:0!important}
+html.wh ul.subcategories .image img{width:100%!important;height:100%!important;max-width:none!important;max-height:120px;object-fit:contain;position:static!important}
+html.wh ul.subcategories .text{position:static!important;padding:0!important;width:auto!important;text-align:center;background:none!important;color:var(--ink)!important}
+html.wh ul.subcategories li a{height:auto!important;align-self:stretch}
+
+/* mobil: lichá poslední dlaždice oblíbených kategorií přes celou šířku */
+@media (max-width:767px){
+html.wh .w-tiles--orig>*:last-child:nth-child(even){grid-column:1/-1}
+}

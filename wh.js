@@ -64,6 +64,8 @@
       { h: 'Nakupování', l: [['Doprava a platby', '/doprava/'], ['Obchodní podmínky', '/obchodni-podminky/'], ['Ochrana osobních údajů', '/podminky-ochrany-osobnich-udaju/'], ['Dárkové poukazy', '/darkove-poukazy/']] }
     ],
     /* detail produktu pod tlačítkem (jako v návrhu); [ikona, text] */
+    /* medailonek na detailu produktu: jméno, text a fotka (img: odkaz na fotku, prázdné = písmeno) – upravitelné zde */
+    medailon: { name: 'Hana', img: '', text: 'Nevíte si rady s výběrem příze nebo množstvím? Napište mi, ráda poradím.' },
     usps: [['truck', 'Doprava zdarma od 2&nbsp;000&nbsp;Kč'], ['mail', 'Nevíte si rady s množstvím? <a href="mailto:info@pletanky.cz">Napište nám</a>']],
     swatchMax: 11
   };
@@ -131,13 +133,14 @@
   function logoHtml(tag) { return '<' + (tag || 'a') + ' class="logo" href="/"><img src="' + esc(logoSrc) + '" alt="Pletánky.cz"></' + (tag || 'a') + '>'; }
 
   /* ---------- popisky produktů: složení / návin / jehlice ---------- */
-  var KEYS = /(Složení|Hmotnost klubíčka|Hmotnost|Váha\s*\/\s*návin|Váha|Návin|Délka|Doporučená síla jehlic|Doporučená velikost jehlic|Síla jehlic|Velikost jehlic|Jehlice\s*\/\s*háček|Jehlice|Doporučená velikost háčku|Doporučená síla háčku|Síla háčku|Velikost háčku|Háček|Skupina přízí|Zkušební vzorek|Instagram)\s*:\s*/gi;
+  var KEYS = /(Složení|Hmotnost klubíčka|Hmotnost|Váha\s*\/\s*návin|Váha|Návin|Délka|Doporučená síla jehlic|Doporučená velikost jehlic|Síla jehlic|Velikost jehlic|Jehlice\s*\/\s*háček|Háček\s*\/\s*jehlice|Jehlice|Doporučená velikost háčku|Doporučená síla háčku|Síla háčku|Velikost háčku|Háček|Skupina přízí|Zkušební vzorek|Instagram)\s*:\s*/gi;
   function norm(k) {
     k = k.toLowerCase().replace(/\s+/g, ' ');
     if (k.indexOf('složení') === 0) return 's';
     if (/váha ?\/ ?návin/.test(k)) return 'wn';
     if (k.indexOf('hmotnost') === 0 || k === 'váha') return 'w';
     if (k === 'návin' || k === 'délka') return 'n';
+    if (k.indexOf('jehlic') > -1 && k.indexOf('háč') > -1) return 'jh';
     if (k.indexOf('jehlic') > -1) return 'j';
     if (k.indexOf('háč') > -1) return 'h';
     if (k.indexOf('skupina') === 0) return 'g';
@@ -166,16 +169,17 @@
   function pct(s) { return s.replace(/(\d)\s*%/g, '$1 %').replace(/\s*,\s*(?=\d)/g, ', ').replace(/,(?=\S)/g, ', '); }
   function specRows(v) {
     var r = [], nav = v.wn ? v.wn.replace(/\s*gramů/, ' g') : (v.w && v.n ? v.w + ' = ' + v.n : (v.w || v.n || ''));
-    var nd = v.j && v.h ? v.j + ' / ' + v.h : (v.j || v.h || ''), nl = v.j && v.h ? 'Jehlice / háček' : (v.j ? 'Jehlice' : (v.h ? 'Háček' : 'Jehlice / háček'));
-    if (!(nav || nd)) { if (v.s) r.push(['Složení', pct(v.s)]); return r; }
+    var nd = v.jh || (v.j && v.h ? v.j + ' / ' + v.h : (v.j || v.h || '')), nl = v.jh || (v.j && v.h) ? 'Jehlice / háček' : (v.j ? 'Jehlice' : (v.h ? 'Háček' : 'Jehlice / háček'));
+    if (!(nav || nd)) { if (v.s) r.push(['Složení', pct(v.s)]); if (v.v) r.push(['Zkušební vzorek', v.v]); return r; }
     /* vždy stejný rámeček: složení | návin | jehlice nebo háček */
     r.push(['Složení', v.s ? pct(v.s) : '–']);
     r.push(['Návin', nav || '–']);
     r.push([nl, nd || '–']);
+    if (v.v) r.push(['Zkušební vzorek', v.v]);
     return r;
   }
   function specsHtml(rows, c) {
-    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
+    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (r[0] === 'Zkušební vzorek' ? ' class="is-sample"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
   }
   function fullDesc(href) {
     var k = 'whd:' + href, c = cacheGet(k, 864e5, 's');
@@ -331,6 +335,10 @@
       sf.classList.add('w-search');
       sf.insertAdjacentHTML('afterbegin', W(svg('ico--sm', P.search)));
       var inp = sf.querySelector('input[name=string]'); if (inp) inp.placeholder = 'Hledat přízi, odstín, značku…';
+      /* Enter i klik na lupu hledá spolehlivě ve všech prohlížečích (tlačítko Hledat je skryté) */
+      var goSearch = function () { var q = inp && inp.value.trim(); if (q) location.href = '/vyhledavani/?string=' + encodeURIComponent(q); };
+      on(inp, 'keydown', function (e) { if (e.key === 'Enter' || e.keyCode === 13) { e.preventDefault(); e.stopPropagation(); goSearch(); } });
+      on(sf.querySelector('.w-ico'), 'click', goSearch);
       /* Shoptet zapíná našeptávač jen pro formulář uvnitř .search */
       var sw = D.createElement('div'); sw.className = 'search w-search-wrap'; slot.replaceWith(sw); sw.appendChild(sf);
       if (!sf.querySelector('.search-whisperer') && window.fulltextSearch && window.jQuery && jQuery.isReady) { try { var $i = jQuery(sf).find('input.query-input'); $i.after('<div class="search-whisperer"></div>'); fulltextSearch($i, jQuery(sw).find('.search-whisperer')); } catch (e) {} }
@@ -387,7 +395,7 @@
     });
   }
   function renderMega(li, n, items) {
-    var tiles = items.filter(function (x) { return x.i; }).slice(0, 10);
+    var tiles = items.filter(function (x) { return x.i; });
     var rest = items.filter(function (x) { return tiles.indexOf(x) < 0; });
     var tEl = li.querySelector('.w-mega__tiles'), cEl = li.querySelector('.w-mega__col');
     if (tiles.length) {
@@ -396,8 +404,7 @@
       tEl.className = 'w-mega__links';
       tEl.innerHTML = rest.splice(0).map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join('');
     }
-    cEl.innerHTML = W((rest.length ? '<p class="mega__h">Další</p>' : '<p class="mega__h">&nbsp;</p>') + rest.slice(0, 14).map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join('') +
-      '<a class="mega__all" href="' + n.h + '">Zobrazit vše' + svg('ico--xs', P.right) + '</a>');
+    cEl.innerHTML = W((rest.length ? '<p class="mega__h">Další</p>' : '<p class="mega__h">&nbsp;</p>') + rest.map(function (x) { return '<a href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join(''));
   }
 
   /* ---------- úvodní stránka ---------- */
@@ -504,32 +511,21 @@
       var im = per.querySelector('img'); if (im) pimg = imgOf(im);
     }
     if (!pimg) { var fi = $('#products .product img'); pimg = imgOf(fi); }
-    var rows = [];
-    if (v.s) rows.push(['Složení', pct(v.s)]);
-    if (v.wn) rows.push(['Klubko', v.wn.replace(/\s*=\s*cca\s*/, ' / ').replace(/\s*metrů/, ' m')]);
-    if (v.j) rows.push(['Jehlice', v.j]); else if (v.h) rows.push(['Háček', v.h]);
-    if (v.g) rows.push(['Skupina', v.g.replace(/\s*\(.*?\)\s*\/?\s*/, ' · ').replace(/\s*\/\s*/g, ' / ')]);
     var cr = crumbs();
-    var hero = box('<section class="chero"><div class="wrap">' + cr.html + '<div class="chero__in' + (pimg ? '' : ' chero__in--noimg') + '"><div class="chero__txt"><h1 class="h1 h1--cat">' + esc(h1) + '</h1>' +
-      (lead ? '<p>' + esc(lead) + '</p>' : '') + specsHtml(rows, 'specs') + (per && txt(per).length > lead.length + 40 ? '<button class="chero__more" type="button">Více o kategorii' + svg('ico--xs', P.down) + '</button>' : '') + '</div>' +
-      (pimg ? '<div class="chero__img"><img src="' + esc(pimg) + '" alt=""></div>' : '') + '</div><div class="subcats"></div></div></section>');
+    var hero = box('<section class="chero chero--slim"><div class="wrap">' + cr.html + '</div></section>');
     hero.id = 'whCat';
     before(cw, hero);
-    var more = hero.querySelector('.w-chero__more');
-    if (more && top) on(more, 'click', function () { var o = B.classList.toggle('w-perex-open'); more.classList.toggle('w-is-open', o); if (o && per) per.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-    /* podkategorie jako čipy */
-    var sc = hero.querySelector('.w-subcats');
-    var here = location.pathname;
-    var chips = function (items, cur) {
-      if (!items.length) { sc.remove(); return; }
-      sc.innerHTML = W(items.map(function (x) { return '<a class="subcat' + (x.h === cur ? ' is-on' : '') + '" href="' + esc(x.h) + '">' + esc(x.t) + '</a>'; }).join(''));
-    };
-    var own = $$('ul.subcategories li a').map(function (a) { return { t: txt(a.querySelector('.text') || a), h: a.getAttribute('href') }; });
-    if (own.length) chips(own, '');
-    else {
-      var par = cr.items.length > 2 ? cr.items[cr.items.length - 2] : null;
-      if (par && par.h && par.h !== '/') subcats(par.h).then(function (it) { chips(it, here); }).catch(function () { sc.remove(); });
-      else sc.remove();
+    /* podkategorie jako dlaždice „postaru“ (nativní, s obrázkem; bez obrázku jen text) */
+    $$('ul.subcategories li').forEach(function (li) {
+      var im = li.querySelector('img'); var src = im ? (im.getAttribute('data-src') || im.getAttribute('src') || '') : '';
+      if (!im || /folder\.svg/.test(src)) li.classList.add('w-noimg');
+      else if (im.getAttribute('data-src')) im.setAttribute('src', im.getAttribute('data-src'));
+    });
+    /* název kategorie jako hlavička bočního menu nad filtry (na mobilu / bez filtrů nad výpisem) */
+    var sbx = $('#content-wrapper .sidebar-inner') || $('#content-wrapper .sidebar');
+    if (h1) {
+      if (sbx) { var sh = box('<h1 class="h1 h1--side">' + esc(h1) + '</h1>'); sbx.insertBefore(sh, sbx.firstChild); }
+      if (top) { var mt = box('<p class="h1--mob" role="presentation">' + esc(h1) + '</p>'); top.insertBefore(mt, top.firstChild); }
     }
     /* filtry: tlačítko + šuplík na mobilu */
     var sb = $('#content-wrapper .sidebar');
@@ -581,11 +577,23 @@
       var stw = $('.p-detail-info .stars-wrapper'); if (stw) after(h1c, stw);
       var leadAll = (d.lead + (d.lead && d.extra ? ' ' : '') + d.extra).trim();
       if (leadAll) { var l = box('<p class="pd__lead">' + esc(leadAll) + '</p>'); after(stw || h1c, l); }
-      var atc = $('.add-to-cart', info) || $('.p-final-price-wrapper', info);
+      var atc = $('.add-to-cart', info);
+      var pw = $('.p-final-price-wrapper', info), av = $('.availability-value', info);
       var rows = specRows(d.v);
       if (d.v.g) rows.push(['Skupina', d.v.g]);
-      var extra = box('<ul class="pd__usp">' + CONFIG.usps.map(function (u) { return '<li>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</li>'; }).join('') + '</ul>' + specsHtml(rows, 'specs specs--pd'));
-      if (atc) after(atc, extra); else info.appendChild(extra);
+      /* pořadí: krátký popis → parametry → varianty → sklad → cena + ks + košík v řadě → doprava zdarma → oblíbené/porovnání → medailonek */
+      var anchor = l || stw || h1c;
+      if (rows.length) { var sp = box(specsHtml(rows, 'specs specs--pd')); after(anchor, sp); anchor = sp; }
+      var swSlot = box('<div class="pd__swh" hidden></div>'); after(anchor, swSlot); anchor = swSlot; info.__whSw = swSlot;
+      if (av) { after(anchor, av); anchor = av; }
+      if (pw && atc) {
+        var buy = D.createElement('div'); buy.className = 'w-buy'; after(anchor, buy); buy.appendChild(pw); buy.appendChild(atc); anchor = buy;
+      }
+      var usp = box('<ul class="pd__usp">' + CONFIG.usps.map(function (u) { return '<li>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</li>'; }).join('') + '</ul>');
+      after(anchor, usp); anchor = usp;
+      var soc = $('.social-buttons-wrapper', info); if (soc) { soc.classList.add('w-soc'); after(anchor, soc); anchor = soc; }
+      var m = CONFIG.medailon;
+      if (m) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="' + esc(m.name) + '" loading="lazy">' : '<span class="pd__med-ph">' + esc(m.name.charAt(0)) + '</span>') + '<div><b>' + esc(m.name) + '</b><p>' + esc(m.text) + '</p></div></aside>'); after(anchor, mb); }
       if (sdEl && rows.length) sdEl.classList.add('w-sd-hidden');
     }
     $$('.add-to-cart-button', det).forEach(function (btn) {
@@ -625,9 +633,7 @@
   /* odstíny: sourozenci z nadřazené kategorie se společným začátkem názvu (např. „Příze DROPS Brushed Alpaca Silk …“) */
   function swatches(catUrl, info, h1) {
     var me = location.pathname;
-    var slot = box('<div class="pd__swh" hidden></div>');
-    var avEl = $('.availability-value', info) || $('.p-final-price-wrapper', info);
-    if (avEl) after(avEl, slot); else return;
+    var slot = info.__whSw; if (!slot) return;
     getDoc(catUrl).then(function (doc) {
       var ps = $$('#products .product', doc).map(function (x) {
         var a = x.querySelector('a.name') || x.querySelector('a.image'); var im = x.querySelector('a.image img');
