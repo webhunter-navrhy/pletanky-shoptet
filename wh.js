@@ -689,6 +689,15 @@
       '<div class="wrap ftr__pay"><span class="ftr__h">Platební metody</span><ul class="payl"><li class="pay pay--gopay">GoPay</li><li class="pay pay--visa">VISA</li><li class="pay pay--mc"><i></i><i></i>Mastercard</li><li class="pay">Apple Pay</li><li class="pay">Google Pay</li></ul></div></footer>');
     w.id = 'whFtr';
     before(f, w);
+    /* newsletter na podstránkách: sidebar je skrytý, formulář přesuneme nad patičku */
+    var nf = $('#formNewsletterWidget');
+    if (nf && !isType('index') && !$('#whHome')) {
+      var n = box('<section class="w-news"><div class="wrap w-news__in"><h2 class="w-h2">Newsletter</h2><p>Nové odstíny, akce na příze a tipy na projekty. Jednou za čas, nikdy otravně.</p><div class="w-news__slot"></div></div></section>', 'div');
+      n.id = 'whNews';
+      nf.classList.add('w-news__native');
+      n.querySelector('.w-news__slot').replaceWith(nf);
+      before(w, n);
+    }
   }
 
   /* ---------- spuštění ---------- */
