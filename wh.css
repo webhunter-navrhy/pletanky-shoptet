@@ -1120,3 +1120,7 @@ html.wh .w-news__native .form-control-wrapper{margin:0}
  html.wh .w-news__native .consents{grid-row:3}
  html.wh .w-news__native>fieldset>button{grid-row:4}
 }
+html.wh .w-news__native,html.wh .w-news__native *{box-sizing:border-box;min-width:0}
+html.wh .w-news__native{width:100%;padding:0 16px}
+html.wh .w-news__native>fieldset{width:100%}
+html.wh .w-news__native input[type=email],html.wh .w-news__native input[type=text]{max-width:100%}
