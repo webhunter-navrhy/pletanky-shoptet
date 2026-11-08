@@ -647,6 +647,26 @@
       var bp = $('.browse-p');
       var rhi = rh.querySelector('.w-sh') || rh;
       if (bp) { $$('.p-prev,.p-next', bp).forEach(function (a) { rhi.appendChild(a); }); }
+      (function () {
+        var grid = $('.products-related', rh.parentNode) || $('.products-related'); if (!grid) return;
+        var items = $$('.product', grid), off = 0, vis = 0;
+        items.forEach(function (it) { if (getComputedStyle(it).display !== 'none') vis++; });
+        if (!vis || items.length <= vis) return;
+        function upd() {
+          items.forEach(function (it, i) { it.style.display = (i >= off && i < off + vis) ? '' : 'none'; });
+          var pv = $('.p-prev', rhi), nx = $('.p-next', rhi);
+          if (pv) pv.classList.toggle('inactive', off === 0);
+          if (nx) nx.classList.toggle('inactive', off + vis >= items.length);
+        }
+        ['.p-prev', '.p-next'].forEach(function (sel, k) {
+          var a = $(sel, rhi); if (!a) return;
+          a.addEventListener('click', function (e) {
+            e.preventDefault(); e.stopImmediatePropagation();
+            off = Math.max(0, Math.min(items.length - vis, off + (k ? 1 : -1))); upd();
+          }, true);
+        });
+        upd();
+      })();
     }
     /* záložky (popis, parametry, hodnocení) před související produkty jako v návrhu */
     var tabs = $('.shp-tabs-wrapper');
