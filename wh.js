@@ -8,8 +8,11 @@
 
   var IMG = 'https://webhunter-navrhy.github.io/pletanky-shoptet/img/';
   var CONFIG = {
+    newsText: 'Nový odstín vaší oblíbené příze, tip na víkendové tvoření nebo akce na klubíčka? Přihlaste se k odběru newsletteru a dozvíte se mezi prvními, co pro vás v Pletánkách chystáme.',
+    newsBtn: 'Ano, chci novinky',
     topbar: { left: 'Doprava zdarma od 2 000 Kč', mid: 'Příze DROPS v akci až −30 %', midHref: '/akcni-zbozi/' },
     nav: [
+      { t: 'Akce', h: '/akcni-zbozi/', akce: true },
       { t: 'Příze na pletení', h: '/prize/' },
       { t: 'Háčkovací příze', h: '/hackovaci-prize/' },
       { t: 'Špagáty a macramé', h: '/ceske-hobby-spagaty/' },
@@ -17,8 +20,7 @@
       { t: 'Korálky', h: '/koralky-/' },
       { t: 'Kameny a minerály', h: '/kameny-polodrahokamy-mineraly-/' },
       { t: 'Bižuterní komponenty', h: '/bizuterni-komponenty/' },
-      { t: 'Značky', h: '/znacka/', brands: true },
-      { t: 'Akce', h: '/akcni-zbozi/', akce: true }
+      { t: 'Značky', h: '/znacka/', brands: true }
     ],
     menuExtra: [
       { t: 'Novinky', h: '/novinky-2/' }, { t: 'Slevy a výprodej', h: '/vyprodej/' },
@@ -180,7 +182,7 @@
     return r;
   }
   function specsHtml(rows, c) {
-    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (r[0] === 'Zkušební vzorek' ? ' class="is-sample is-wide"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
+    return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (/zkušební vzorek$|^Typ příze$/.test(r[0]) ? ' class="is-sample is-wide"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
   }
   function fullDesc(href) {
     var k = 'whd:' + href, c = cacheGet(k, 864e5, 's');
@@ -284,6 +286,13 @@
     });
   }
 
+  /* newsletter: popisky jako zástupný text, vlastní text tlačítka */
+  function tuneNews(nf) {
+    var em = nf.querySelector('input[type=email]'); if (em) { em.setAttribute('placeholder', 'Váš e-mail'); em.setAttribute('aria-label', 'Váš e-mail'); }
+    var cp = nf.querySelector('input[name=captcha]'); if (cp) { cp.setAttribute('placeholder', 'Opište text z obrázku'); cp.setAttribute('aria-label', 'Opište text z obrázku'); }
+    var bt = nf.querySelector('button[type=submit]'); if (bt) bt.textContent = CONFIG.newsBtn;
+  }
+
   /* ---------- hlavička ---------- */
   function cartState() {
     var a = $('#header a.cart-count') || $('a.cart-count');
@@ -296,8 +305,7 @@
   }
   function buildHeader() {
     var navHtml = CONFIG.nav.map(function (n, i) {
-      if (n.akce) return '<li class="nav__li"><a class="nav__a nav__a--akce" href="' + n.h + '">' + n.t + '</a></li>';
-      return '<li class="nav__li has-mega" data-i="' + i + '"><a class="nav__a" href="' + n.h + '">' + n.t + svg('ico--xs', P.down) + '</a>' +
+      return '<li class="nav__li has-mega" data-i="' + i + '"><a class="nav__a' + (n.akce ? ' nav__a--akce' : '') + '" href="' + n.h + '">' + n.t + svg('ico--xs', P.down) + '</a>' +
         '<div class="mega" role="region" aria-label="' + esc(n.t) + '"><div class="mega__in wrap"><div class="mega__main"><p class="mega__h">' + esc(n.t) + '</p><div class="mega__tiles"></div></div><div class="mega__col"></div></div></div></li>';
     }).join('');
     var cur = $$('a[href*="currencyCode="]').map(function (a) { return a; });
@@ -432,13 +440,13 @@
       '<section class="sec"><div class="wrap"><a class="themeband" href="' + CONFIG.theme.h + '"><img src="' + CONFIG.theme.img + '" alt="' + esc(CONFIG.theme.alt) + '" loading="lazy"><span class="themeband__in"><small>' + CONFIG.theme.small + '</small><b>' + CONFIG.theme.b + '</b><span class="btn btn--cart">' + CONFIG.theme.btn + '</span></span></a></div></section>' +
       sec('Novinky', '<div class="whx-slot" data-slot="nov"></div>', ['Všechny novinky', '/novinky-2/']) +
       '<div class="whx-slot" data-slot="blog"></div><div class="whx-slot" data-slot="rvs"></div><div class="whx-slot" data-slot="ig"></div>' +
-      '<section class="news"><div class="wrap news__in"><h2 class="h2">Newsletter</h2><p>Nové odstíny, akce na příze a tipy na projekty. Jednou za čas, nikdy otravně.</p><div class="news__slot"></div></div></section>';
+      '<section class="news"><div class="wrap news__in"><h2 class="h2">Newsletter</h2><p>' + esc(CONFIG.newsText) + '</p><div class="news__slot"></div></div></section>';
     var w = box(html, 'main'); w.id = 'whHome';
     after(cw, w);
     var slot = function (n) { return w.querySelector('[data-slot="' + n + '"]'); };
     /* newsletter – nativní formulář i s captchou */
     var nf = $('#formNewsletterWidget');
-    if (nf) { nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news').remove();
+    if (nf) { tuneNews(nf); nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news').remove();
     /* akce + novinky */
     var fallback = $$('#content .product').slice(0, 4).map(function (x) { return x.outerHTML; }).join('');
     [['akce', '/akcni-zbozi/'], ['nov', '/novinky-2/']].forEach(function (s) {
@@ -467,10 +475,26 @@
         var st = v.querySelectorAll('.star-on').length || 5;
         return '<figure class="rv">' + stars(st) + '<blockquote>' + esc(txt(v.querySelector('.vote-content'))) + '</blockquote><figcaption><b>' + esc(txt(v.querySelector('.vote-name span') || v.querySelector('.vote-name'))) + '</b><span>' + esc(txt(v.querySelector('.vote-time'))) + '</span></figcaption></figure>';
       }).join('');
+      /* komentáře k produktům: poslední hodnocení a diskuze z úvodní stránky Shoptetu */
+      var pcm = $$('.latest-contribution-inner').map(function (a) {
+        var im = a.querySelector('.latest-contribution-image img'), src = im ? (im.getAttribute('data-src') || im.getAttribute('src') || '') : '';
+        var de = a.querySelector('.latest-contribution-description'), dt = '';
+        if (de) { var cl = de.cloneNode(true); $$('div,br', cl).forEach(function (x) { x.append(' '); }); dt = txt(cl).replace(/\s+/g, ' ').trim(); }
+        var au = txt(a.querySelector('.latest-contribution-author')), da = txt(a.querySelector('.latest-contribution-date'));
+        return { h: a.getAttribute('href'), n: txt(a.querySelector('.latest-contribution-product')), i: /^data:/.test(src) ? '' : src, st: a.querySelectorAll('.star-on').length || 5, d: dt, a: au, t: da };
+      }).filter(function (x) { return x.n; }).sort(function (a, b) { return (b.d ? 1 : 0) - (a.d ? 1 : 0); }).slice(0, 6).map(function (x) {
+        return '<figure class="rv rv--prod"><a class="rv__p" href="' + esc(x.h) + '">' + (x.i ? '<img src="' + esc(x.i) + '" alt="" loading="lazy">' : '') + '<span>' + esc(x.n) + '</span></a>' + stars(x.st) + (x.d ? '<blockquote>' + esc(x.d) + '</blockquote>' : '') + '<figcaption><b>' + esc(x.a) + '</b><span>' + esc(x.t) + '</span></figcaption></figure>';
+      }).join('');
       if (!vs) { slot('rvs').remove(); return; }
       slot('rvs').replaceWith(box(sec('Recenze zákazníků', '<div class="rvs"><div class="rvs__sum"><p class="rvs__score">' + esc(avg || '5,0') + '</p>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
         '<p class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</p><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line btn--full" href="/hodnoceni-obchodu/">Všechna hodnocení</a></div>' +
-        '<div class="rvs__main"><div class="rvs__grid">' + vs + '</div></div></div>')));
+        '<div class="rvs__main" data-tabs>' + (pcm ? '<div class="rvs__tabs" role="tablist"><button class="is-on" type="button" data-tab="0">Hodnocení obchodu</button><button type="button" data-tab="1">Komentáře k produktům</button></div>' : '') +
+        '<div class="tabs__panel is-on"><div class="rvs__grid">' + vs + '</div></div>' + (pcm ? '<div class="tabs__panel"><div class="rvs__grid rvs__grid--3">' + pcm + '</div></div>' : '') + '</div></div>')));
+      $$('.w-rvs__tabs [data-tab]').forEach(function (b) { b.addEventListener('click', function () {
+        var m = b.closest('.w-rvs__main'), i = +b.getAttribute('data-tab');
+        $$('[data-tab]', m).forEach(function (x) { x.classList.toggle('w-is-on', x === b); });
+        $$('.w-tabs__panel', m).forEach(function (p, k) { p.classList.toggle('w-is-on', k === i); });
+      }); });
     }).catch(function () { slot('rvs').remove(); });
     /* instagram */
     var ig = $$('.instagram-widget a').map(function (a) { var i = a.querySelector('img'); return { h: a.getAttribute('href'), i: i ? (i.getAttribute('data-thumbnail-medium') || imgOf(i)) : '' }; }).filter(function (x) { return x.i; });
@@ -587,7 +611,9 @@
       var atc = $('.add-to-cart', info);
       var pw = $('.p-final-price-wrapper', info), av = $('.availability-value', info);
       var rows = specRows(d.v);
-      if (d.v.g) rows.push(['Typ příze', d.v.g]);
+      /* spodní řádek přes celou šířku: typ příze + zkušební vzorek */
+      var smp = null; rows = rows.filter(function (r) { if (r[0] === 'Zkušební vzorek') { smp = r; return false; } return true; });
+      if (d.v.g || smp) rows.push([d.v.g && smp ? 'Typ příze · zkušební vzorek' : (d.v.g ? 'Typ příze' : 'Zkušební vzorek'), [d.v.g, smp && smp[1]].filter(Boolean).join(' · ')]);
       /* pořadí: krátký popis → parametry → varianty → sklad → cena + ks + košík v řadě → doprava zdarma → oblíbené/porovnání → medailonek */
       var anchor = l || stw || h1c;
       if (rows.length) { var sp = box(specsHtml(rows, 'specs specs--pd')); after(anchor, sp); anchor = sp; }
@@ -619,7 +645,8 @@
       relH.parentNode.insertBefore(rh, relH); relH.style.display = 'none';
       /* šipky do řádku nadpisu (nad dlaždicemi, nikdy je nepřekryje hover karta) */
       var bp = $('.browse-p');
-      if (bp) { $$('.p-prev,.p-next', bp).forEach(function (a) { rh.appendChild(a); }); }
+      var rhi = rh.querySelector('.w-sh') || rh;
+      if (bp) { $$('.p-prev,.p-next', bp).forEach(function (a) { rhi.appendChild(a); }); }
     }
     /* záložky (popis, parametry, hodnocení) před související produkty jako v návrhu */
     var tabs = $('.shp-tabs-wrapper');
@@ -692,9 +719,9 @@
     /* newsletter na podstránkách: sidebar je skrytý, formulář přesuneme nad patičku */
     var nf = $('#formNewsletterWidget');
     if (nf && !isType('index') && !$('#whHome')) {
-      var n = box('<section class="w-news"><div class="wrap w-news__in"><h2 class="w-h2">Newsletter</h2><p>Nové odstíny, akce na příze a tipy na projekty. Jednou za čas, nikdy otravně.</p><div class="w-news__slot"></div></div></section>', 'div');
+      var n = box('<section class="w-news"><div class="wrap w-news__in"><h2 class="w-h2">Newsletter</h2><p>' + esc(CONFIG.newsText) + '</p><div class="w-news__slot"></div></div></section>', 'div');
       n.id = 'whNews';
-      nf.classList.add('w-news__native');
+      tuneNews(nf); nf.classList.add('w-news__native');
       n.querySelector('.w-news__slot').replaceWith(nf);
       before(w, n);
     }
