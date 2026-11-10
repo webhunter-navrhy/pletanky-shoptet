@@ -253,10 +253,9 @@ html.wh .search-whisperer{z-index:300;border-radius:0;border:1px solid var(--lin
   html.wh .p-info-wrapper .add-to-cart .add-to-cart-button{padding:0 14px}
 }
 /* logo klientky (obrázek) místo textového loga z návrhu */
-html.wh .whx .w-logo img{height:72px;width:auto;max-width:none;transition:height .3s}
-html.wh .whx .w-hdr.w-is-stuck .w-logo img{height:56px}
+html.wh .whx .w-logo img{height:72px;width:auto;max-width:none;}
 html.wh .whx .w-ftr__brand .w-logo img{height:72px}
-@media (max-width:900px){html.wh .whx .w-logo img,html.wh .whx .w-hdr.w-is-stuck .w-logo img{height:44px}}
+@media (max-width:900px){html.wh .whx .w-logo img{height:44px}}
 /* filtry: bez šedého boxu, barvy jako čtverečky z návrhu */
 html.wh #filters .filter-sections,html.wh #filters .filter-section,html.wh #filters #category-filter-hover,html.wh #filters fieldset,html.wh #filters .advanced-filters-wrapper{background:none!important;box-shadow:none!important}
 html.wh #filters .filter-section{padding:16px 0!important;border-top:1px solid var(--line)!important;margin:0!important}
@@ -494,3 +493,27 @@ html.wh .w-news__native,html.wh .w-news__native *{box-sizing:border-box;min-widt
 html.wh .w-news__native{width:100%;padding:0 16px}
 html.wh .w-news__native>fieldset{width:100%}
 html.wh .w-news__native input[type=email],html.wh .w-news__native input[type=text]{max-width:100%}
+
+/* carousel úvodního banneru: slidy v jedné mřížce, přepínání průhledností */
+html.wh .whx .w-car{position:relative;display:grid;overflow:hidden;background:var(--champ)}
+html.wh .whx .w-car__s{grid-area:1/1;opacity:0;visibility:hidden;transition:opacity .7s,visibility .7s;min-width:0}
+html.wh .whx .w-car__s.w-is-on{opacity:1;visibility:visible;z-index:2}
+html.wh .whx .w-car__n{position:relative;display:block;overflow:hidden;background:#f3ece6}
+html.wh .whx .w-car__bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(28px) saturate(1.1);opacity:.75}
+html.wh .whx .w-car__n img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+html.wh .whx .w-car__ctl{position:absolute;left:0;right:0;bottom:14px;z-index:5;display:flex;justify-content:center;align-items:center;gap:12px;pointer-events:none}
+html.wh .whx .w-car__ctl>*{pointer-events:auto}
+html.wh .whx .w-car__b{width:38px;height:38px;border:1px solid var(--line);background:rgba(255,255,255,.92);display:grid;place-items:center;border-radius:50%;cursor:pointer;padding:0}
+html.wh .whx .w-car__prev svg{transform:rotate(180deg)}
+html.wh .whx .w-car__dots{display:flex;gap:8px;padding:8px 12px;background:rgba(255,255,255,.85);border-radius:20px}
+html.wh .whx .w-car__dots button{width:10px;height:10px;padding:0;border:1px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer}
+html.wh .whx .w-car__dots button.w-is-on{background:var(--ink)}
+@media (max-width:760px){html.wh .whx .w-car__n{min-height:300px}html.wh .whx .w-car__b{width:34px;height:34px}}
+/* okno rubriky s více odkazy */
+html.wh .whx .w-sheet{position:fixed;inset:0;z-index:110;display:grid;place-items:center;background:rgba(43,34,38,.5);visibility:hidden;opacity:0;transition:opacity .25s,visibility .25s}
+html.wh .whx .w-sheet.w-is-open{visibility:visible;opacity:1}
+html.wh .whx .w-sheet__p{position:relative;background:#fff;width:min(440px,calc(100% - 32px));padding:32px 28px 28px;border-radius:var(--r)}
+html.wh .whx .w-sheet__x{position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+html.wh .whx .w-sheet__h{margin:0 0 18px!important}
+html.wh .whx .w-sheet__l{display:grid;gap:10px}
+html.wh .whx .w-sheet__l .w-btn{justify-content:space-between;width:100%}

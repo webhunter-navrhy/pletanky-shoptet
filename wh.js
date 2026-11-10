@@ -11,21 +11,19 @@
     newsText: 'Nový odstín vaší oblíbené příze, tip na víkendové tvoření nebo akce na klubíčka? Přihlaste se k odběru newsletteru a dozvíte se mezi prvními, co pro vás v Pletánkách chystáme.',
     newsBtn: 'Ano, chci novinky',
     topbar: { left: 'Doprava zdarma od 2 000 Kč', mid: 'Příze DROPS v akci až −30 %', midHref: '/akcni-zbozi/' },
-    nav: [
+    /* hlavní menu se čte z nativního #navigation Shoptetu (názvy, pořadí i nové kategorie se přebírají samy);
+       navFallback se použije jen, kdyby nativní menu chybělo */
+    akceHref: '/akcni-zbozi/',
+    navInfo: ['/doprava/', '/hodnoceni-obchodu/', '/kontakty/'],
+    navFallback: [
       { t: 'Akce', h: '/akcni-zbozi/', akce: true },
       { t: 'Příze na pletení', h: '/prize/' },
-      { t: 'Háčkovací příze', h: '/hackovaci-prize/' },
       { t: 'Špagáty a macramé', h: '/ceske-hobby-spagaty/' },
       { t: 'Pomůcky', h: '/pomucky/' },
-      { t: 'Korálky', h: '/koralky-/' },
-      { t: 'Kameny a minerály', h: '/kameny-polodrahokamy-mineraly-/' },
-      { t: 'Bižuterní komponenty', h: '/bizuterni-komponenty/' },
-      { t: 'Značky', h: '/znacka/', brands: true }
+      { t: 'Korálky', h: '/koralky-/' }
     ],
-    menuExtra: [
-      { t: 'Novinky', h: '/novinky-2/' }, { t: 'Slevy a výprodej', h: '/vyprodej/' },
-      { t: 'Návlekový materiál', h: '/navlekovy-material/' }, { t: 'Dárkové poukazy', h: '/darkove-poukazy/' }
-    ],
+    akceCount: 8,
+    carouselMs: 6500,
     banner: {
       h1: 'Vše pro radost z tvoření',
       p: 'Příze DROPS, Alize a YarnArt, šňůry na macramé, korálky a kameny. Vyberte si barvu, která Vám udělá radost.',
@@ -47,14 +45,16 @@
       { t: 'Dárkové poukazy', s: 'Pro všechny, kdo rádi tvoří', h: '/darkove-poukazy/', img: 'klubko.jpg' }
     ],
     projs: [
-      { t: 'Svetry a kardigany', h: '/prize-s-obsahem-vlny/', img: 'proj-svetry.jpg' },
-      { t: 'Čepice a šály', h: '/moherove/', img: 'proj-cepice.jpg' },
+      { t: 'Svetry a kardigany', h: '/prize-s-obsahem-vlny/', img: 'proj-svetry.jpg', links: [['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/'], ['Značka DROPS', '/znacka/drops/']] },
+      { t: 'Čepice a šály', h: '/moherove/', img: 'proj-cepice.jpg', links: [['Moherové příze', '/moherove/'], ['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/']] },
       { t: 'Ponožky', h: '/ponozkove-2/', img: 'proj-ponozky.jpg' },
-      { t: 'Deky a pledy', h: '/zinylkove-prize/', img: 'proj-deky.jpg' },
-      { t: 'Hračky a amigurumi', h: '/hackovaci-prize/', img: 'proj-amigurumi.jpg' },
-      { t: 'Macramé do bytu', h: '/ceske-hobby-spagaty/', img: 'proj-macrame.jpg' },
-      { t: 'Šperky a bižuterie', h: '/koralky-/', img: 'proj-sperky.jpg' }
+      { t: 'Deky a pledy', h: '/zinylkove-prize/', img: 'proj-deky.jpg', links: [['Žinylkové příze', '/zinylkove-prize/'], ['Háčkovací příze', '/hackovaci-prize/'], ['Všechny příze', '/prize/']] },
+      { t: 'Hračky a amigurumi', h: '/hackovaci-prize/', img: 'proj-amigurumi.jpg', links: [['Háčkovací příze', '/hackovaci-prize/'], ['Pomůcky pro výrobu', '/pomucky/']] },
+      { t: 'Macramé do bytu', h: '/ceske-hobby-spagaty/', img: 'proj-macrame.jpg', links: [['Špagátové a šňůrkové příze', '/ceske-hobby-spagaty/'], ['Pomůcky pro výrobu', '/pomucky/'], ['Dřevěné korálky', '/drevene-3/']] },
+      { t: 'Šperky a bižuterie', h: '/koralky-/', img: 'proj-sperky.jpg', links: [['Korálky', '/koralky-/'], ['Kameny a minerály', '/kameny-polodrahokamy-mineraly-/'], ['Bižuterní komponenty', '/bizuterni-komponenty/'], ['Hotové šperky', '/hotove-sperky/'], ['Návlekový materiál', '/navlekovy-material/']] }
     ],
+    /* klientka mění v administraci Shoptetu: první produkt kategorie /odstin-mesice/, první článek (nebo produkt) v /tema-mesice/ */
+    motmHref: '/odstin-mesice/', themeHref: '/tema-mesice/',
     theme: { small: 'Téma měsíce', b: 'Krása podzimu', btn: 'Zobrazit nabídku', h: '/prize-s-obsahem-vlny/', img: IMG + 'tema-podzim.jpg', alt: 'Podzimní tvoření z příze' },
     blogMin: 3,
     email: 'info@pletanky.cz',
@@ -286,6 +286,30 @@
     });
   }
 
+  /* Akce: n produktů z různých rodin (kategorií) napříč stránkami akčního zboží */
+  function famOf(p) {
+    var t = txt(p.querySelector('[data-micro="name"]') || p.querySelector('.name')).replace(/^Příze\s+/i, '').split(/\s+/), o = [];
+    for (var i = 0; i < t.length && o.length < 2; i++) { if (/\d/.test(t[i]) || /^(uni|mix|print|color|colour|unicolor|-)$/i.test(t[i])) break; o.push(t[i].toLowerCase()); }
+    return o.join(' ') || 'x';
+  }
+  function akceGrid(n) {
+    var k = 'wha:' + n, c = cacheGet(k, 6e5, 's');
+    var make = function (html) { var g = D.createElement('div'); g.className = 'w-pgrid products'; g.innerHTML = html; cards(g); return g; };
+    if (c) return Promise.resolve(make(c));
+    var urls = [CONFIG.akceHref]; for (var i = 2; i <= 8; i++) urls.push(CONFIG.akceHref + 'strana-' + i + '/');
+    return Promise.all(urls.map(function (u) { return getDoc(u).then(function (d) { return $$('#products .product', d); }).catch(function () { return []; }); })).then(function (pages) {
+      var all = [].concat.apply([], pages), fam = {}, order = [];
+      all.forEach(function (p) { var f = famOf(p); if (!fam[f]) { fam[f] = []; order.push(f); } fam[f].push(p); });
+      var off = Math.floor(Date.now() / 864e5), out = [], r = 0;
+      while (out.length < n && out.length < all.length) {
+        order.forEach(function (f, j) { var l = fam[f]; if (out.length < n && l.length) out.push(l.splice((off + j) % l.length, 1)[0]); });
+        if (++r > n) break;
+      }
+      if (!out.length) throw new Error('akce');
+      var html = out.map(function (x) { return x.outerHTML; }).join(''); cacheSet(k, html, 's'); return make(html);
+    });
+  }
+
   /* newsletter: popisky jako zástupný text, vlastní text tlačítka */
   function tuneNews(nf) {
     var em = nf.querySelector('input[type=email]'); if (em) { em.setAttribute('placeholder', 'Váš e-mail'); em.setAttribute('aria-label', 'Váš e-mail'); }
@@ -303,11 +327,46 @@
     var empty = !price || /prázdn/i.test(price);
     return { n: n, price: empty ? 'Košík' : price, empty: empty };
   }
+  function path(h) {
+    try { var u = new URL(h, location.href); return u.host === location.host ? u.pathname : u.href; } catch (e) { return h; }
+  }
+  /* menu z nativního #navigation Shoptetu */
+  function readNav() {
+    var ul = $('#navigation ul.menu-level-1') || $('#navigation ul'), out = [];
+    if (ul) Array.prototype.forEach.call(ul.children, function (li) {
+      var a = li.querySelector('a'); if (!a) return;
+      var t = txt(a.querySelector('b') || a), h = path(a.getAttribute('href') || '');
+      if (!t || !h || h === '#') return;
+      out.push({
+        t: t, h: h, akce: h === CONFIG.akceHref, brands: li.classList.contains('nav-manufacturers'),
+        info: CONFIG.navInfo.indexOf(h) >= 0,
+        sub: $$('ul a', li).map(function (x) { return { t: txt(x), h: path(x.getAttribute('href')), i: '' }; })
+      });
+    });
+    if (!out.length) out = CONFIG.navFallback.map(function (n) { return { t: n.t, h: n.h, akce: !!n.akce, sub: [] }; });
+    var k = -1; out.forEach(function (n, i) { if (n.akce && k < 0) k = i; });
+    if (k > 0) out.unshift(out.splice(k, 1)[0]);
+    return out;
+  }
+  var NAV = [];
+  function fitNav(h) {
+    var ul = h.querySelector('.w-nav__ul'), more = ul && ul.querySelector('.w-nav__more'); if (!ul || !more) return;
+    var lis = $$('.w-nav__li[data-i]', ul);
+    lis.forEach(function (l) { l.style.display = ''; }); more.style.display = 'none';
+    if (ul.scrollWidth <= ul.clientWidth + 1) return;
+    more.style.display = '';
+    var hid = [];
+    for (var i = lis.length - 1; i > 0 && ul.scrollWidth > ul.clientWidth + 1; i--) { lis[i].style.display = 'none'; hid.unshift(lis[i]); }
+    more.querySelector('.w-mega__links').innerHTML = hid.map(function (l) { var n = NAV[+l.getAttribute('data-i')]; return '<a href="' + esc(n.h) + '">' + esc(n.t) + '</a>'; }).join('');
+  }
   function buildHeader() {
-    var navHtml = CONFIG.nav.map(function (n, i) {
-      return '<li class="nav__li has-mega" data-i="' + i + '"><a class="nav__a' + (n.akce ? ' nav__a--akce' : '') + '" href="' + n.h + '">' + n.t + svg('ico--xs', P.down) + '</a>' +
+    var navAll = readNav();
+    NAV = navAll.filter(function (n) { return !n.info; });
+    var navHtml = NAV.map(function (n, i) {
+      return '<li class="nav__li has-mega" data-i="' + i + '"><a class="nav__a' + (n.akce ? ' nav__a--akce' : '') + '" href="' + esc(n.h) + '">' + esc(n.t) + svg('ico--xs', P.down) + '</a>' +
         '<div class="mega" role="region" aria-label="' + esc(n.t) + '"><div class="mega__in wrap"><div class="mega__main"><p class="mega__h">' + esc(n.t) + '</p><div class="mega__tiles"></div></div><div class="mega__col"></div></div></div></li>';
-    }).join('');
+    }).join('') +
+      '<li class="nav__li has-mega nav__more" style="display:none"><a class="nav__a" href="#" onclick="return false">Více' + svg('ico--xs', P.down) + '</a><div class="mega"><div class="mega__in wrap"><div class="mega__links"></div></div></div></li>';
     var cur = $$('a[href*="currencyCode="]').map(function (a) { return a; });
     var curHtml = '';
     if (cur.length) {
@@ -329,7 +388,7 @@
       '<nav class="nav" aria-label="Kategorie"><ul class="wrap nav__ul">' + navHtml + '</ul></nav></header>' +
       '<div class="drawer drawer--menu" aria-hidden="true"><div class="drawer__panel"><div class="drawer__head">' + logoHtml() +
       '<button type="button" data-wm-close aria-label="Zavřít">' + svg('', P.close) + '</button></div><nav class="mmenu">' +
-      CONFIG.nav.concat(CONFIG.menuExtra).map(function (n) { return '<a' + (n.akce ? ' class="mmenu__akce"' : '') + ' href="' + n.h + '">' + n.t + svg('ico--sm', P.right) + '</a>'; }).join('') +
+      navAll.map(function (n) { return '<a' + (n.akce ? ' class="mmenu__akce"' : '') + ' href="' + esc(n.h) + '">' + esc(n.t) + svg('ico--sm', P.right) + '</a>'; }).join('') +
       '</nav><div class="mmenu__foot"><a href="/login/">' + svg('ico--sm', P.user) + ' Přihlášení</a><a href="mailto:' + CONFIG.email + '">' + svg('ico--sm', P.mail) + ' ' + CONFIG.email + '</a></div></div></div>');
     h.id = 'whTop';
     var ow = $('.overall-wrapper') || B.firstElementChild;
@@ -365,10 +424,10 @@
     if (hd && window.MutationObserver) new MutationObserver(syncCart).observe(hd, { subtree: true, childList: true, characterData: true });
     D.addEventListener('ShoptetCartUpdated', function () { setTimeout(syncCart, 50); });
     /* mega menu (líně z podkategorií) */
-    $$('.w-has-mega', h).forEach(function (li) {
-      var n = CONFIG.nav[+li.getAttribute('data-i')];
+    $$('.w-has-mega[data-i]', h).forEach(function (li) {
+      var n = NAV[+li.getAttribute('data-i')];
       var done = false;
-      var fill = function () { if (done) return; done = true; megaData(n).then(function (items) { renderMega(li, n, items); }).catch(function () { done = false; }); };
+      var fill = function () { if (done) return; done = true; megaData(n).then(function (items) { renderMega(li, n, items); }).catch(function () { renderMega(li, n, n.sub || []); }); };
       on(li, 'mouseenter', fill); on(li, 'focusin', fill);
     });
     /* šuplík menu */
@@ -382,16 +441,18 @@
     var sen = D.createElement('div'); sen.style.cssText = 'position:absolute;top:140px;height:1px;width:1px;pointer-events:none';
     B.insertBefore(sen, B.firstChild);
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { cls(hdr, 'w-is-stuck', !es[0].isIntersecting); }).observe(sen);
+    var fit = function () { fitNav(h); }, ft = null;
+    fit(); window.addEventListener('load', fit);
+    if (D.fonts && D.fonts.ready) D.fonts.ready.then(fit);
+    window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 120); });
   }
   function megaData(n) {
     var k = 'whm2:' + n.h, c = cacheGet(k, 864e5, 'l');
     if (c) return Promise.resolve(c);
     if (n.brands) {
-      var li = $('#navigation .nav-manufacturers') || $('.nav-manufacturers');
-      var items = li ? $$('ul a', li).map(function (a) { return { t: txt(a), h: a.getAttribute('href'), i: '' }; }) : [];
-      return Promise.resolve(items);
+      return Promise.resolve(n.sub || []);
     }
-    return subcats(n.h).then(function (items) { cacheSet(k, items, 'l'); return items; });
+    return subcats(n.h).then(function (items) { if (!items.length) items = n.sub || []; cacheSet(k, items, 'l'); return items; });
   }
   function subcats(url) {
     var k = 'whs:' + url, c = cacheGet(k, 864e5, 'l');
@@ -421,21 +482,92 @@
     return '<section class="sec' + (extra || '') + '"><div class="wrap"><div class="sh"><h2 class="h2">' + h2 + '</h2></div>' + inner +
       (more ? '<p class="sec__more"><a class="btn btn--line" href="' + more[1] + '">' + more[0] + '</a></p>' : '') + '</div></section>';
   }
+  function initCarousel(w) {
+    var car = w.querySelector('.w-car'); if (!car) return;
+    var sl = $$('.w-car__s', car), ctl = car.querySelector('.w-car__ctl'), cur = 0, tm = null, paused = false;
+    if (sl.length < 2) { ctl.remove(); return; }
+    ctl.innerHTML = '<button type="button" class="car__b car__prev" aria-label="Předchozí">' + svg('ico--sm', P.right) + '</button>' +
+      '<span class="car__dots">' + sl.map(function (x, i) { return '<button type="button" aria-label="Snímek ' + (i + 1) + '" data-i="' + i + '"></button>'; }).join('') + '</span>' +
+      '<button type="button" class="car__b car__next" aria-label="Další">' + svg('ico--sm', P.right) + '</button>';
+    ctl.innerHTML = W(ctl.innerHTML);
+    var dots = $$('.w-car__dots button', ctl);
+    var go = function (i) {
+      cur = (i + sl.length) % sl.length;
+      sl.forEach(function (x, j) { cls(x, 'w-is-on', j === cur); x.setAttribute('aria-hidden', j === cur ? 'false' : 'true'); if (j !== cur) x.setAttribute('tabindex', '-1'); else x.removeAttribute('tabindex'); });
+      dots.forEach(function (d, j) { cls(d, 'w-is-on', j === cur); });
+    };
+    var stop = function () { clearInterval(tm); tm = null; };
+    var play = function () { stop(); if (paused || (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches)) return; tm = setInterval(function () { go(cur + 1); }, CONFIG.carouselMs); };
+    on(ctl.querySelector('.w-car__prev'), 'click', function () { go(cur - 1); play(); });
+    on(ctl.querySelector('.w-car__next'), 'click', function () { go(cur + 1); play(); });
+    dots.forEach(function (d) { on(d, 'click', function () { go(+d.getAttribute('data-i')); play(); }); });
+    on(car, 'mouseenter', function () { paused = true; stop(); }); on(car, 'mouseleave', function () { paused = false; play(); });
+    on(car, 'focusin', function () { paused = true; stop(); }); on(car, 'focusout', function () { paused = false; play(); });
+    var x0 = null;
+    on(car, 'touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    on(car, 'touchend', function (e) { if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 40) { go(cur + (dx < 0 ? 1 : -1)); play(); } });
+    D.addEventListener('visibilitychange', function () { if (D.hidden) stop(); else play(); });
+    go(0); play();
+  }
+  /* rubriky s více odkazy: společné okno */
+  function initProjs(w) {
+    var sh = null;
+    var close = function () { if (sh) { cls(sh, 'w-is-open', false); sh.setAttribute('aria-hidden', 'true'); } };
+    $$('.w-proj[data-links]', w).forEach(function (a) {
+      on(a, 'click', function (e) {
+        e.preventDefault();
+        var ls = []; try { ls = JSON.parse(a.getAttribute('data-links')); } catch (x) {}
+        if (!sh) {
+          sh = box('<div class="sheet" aria-hidden="true" role="dialog" aria-modal="true"><div class="sheet__p"><button type="button" class="sheet__x" aria-label="Zavřít">' + svg('', P.close) + '</button><p class="h2 sheet__h"></p><div class="sheet__l"></div></div></div>');
+          B.appendChild(sh); sh = sh.firstChild;
+          on(sh, 'click', function (ev) { if (ev.target === sh || ev.target.closest('.w-sheet__x')) close(); });
+          D.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') close(); });
+        }
+        sh.querySelector('.w-sheet__h').textContent = a.getAttribute('data-title');
+        sh.querySelector('.w-sheet__l').innerHTML = W(ls.map(function (l) { return '<a class="btn btn--line" href="' + esc(l[1]) + '">' + esc(l[0]) + svg('ico--sm', P.right) + '</a>'; }).join(''));
+        cls(sh, 'w-is-open', true); sh.setAttribute('aria-hidden', 'false');
+        var f = sh.querySelector('a'); if (f) f.focus();
+      });
+    });
+  }
+  /* odstín a téma měsíce: čte se ze Shoptetu, při chybě zůstane výchozí z CONFIG */
+  function initMonth(w) {
+    getDoc(CONFIG.motmHref).then(function (d) {
+      var p = $('#products .product', d); if (!p) return;
+      var a = p.querySelector('a.name') || p.querySelector('a'), im = imgOf(p.querySelector('img')); if (!a || !im) return;
+      var el = w.querySelector('.w-motm-mini'); if (!el) return;
+      el.setAttribute('href', path(a.getAttribute('href')));
+      el.querySelector('img').src = im; el.querySelector('b').textContent = txt(p.querySelector('[data-micro="name"]') || a);
+    }).catch(function () {});
+    getDoc(CONFIG.themeHref).then(function (d) {
+      var el = w.querySelector('.w-themeband'); if (!el) return;
+      var n = $('.news-item', d), t, h, im;
+      if (n) { var a = n.querySelector('a.title') || n.querySelector('a'); t = txt(a); h = a.getAttribute('href'); im = imgOf(n.querySelector('img')); }
+      else { var p = $('#products .product', d); t = txt($('h1', d)); h = CONFIG.themeHref; im = p ? imgOf(p.querySelector('img')) : ''; }
+      if (!t) return;
+      el.setAttribute('href', path(h)); el.querySelector('b').textContent = t;
+      if (im) el.querySelector('img').src = im;
+    }).catch(function () {});
+  }
   function buildHome() {
     var cw = $('#content-wrapper'); if (!cw) return;
     var b = CONFIG.banner;
+    var carHtml = $$('.banners-row .carousel-inner .item').map(function (it) {
+      var im = it.querySelector('img'), a = it.querySelector('a'), src = imgOf(im); if (!src) return '';
+      return '<a class="car__s car__n" href="' + esc(a ? path(a.getAttribute('href')) : '/') + '" aria-label="' + esc(im.getAttribute('alt') || 'Akce') + '"><span class="car__bg" style="background-image:url(&quot;' + esc(src) + '&quot;)"></span><img src="' + esc(src) + '" alt="' + esc(im.getAttribute('alt') || '') + '"></a>';
+    }).join('');
     var html =
-      '<section class="banner"><picture><source media="(max-width:760px)" srcset="' + b.imgM + '"><img class="banner__img" src="' + b.img + '" alt="' + esc(b.alt) + '" fetchpriority="high"></picture>' +
+      '<section class="car"><div class="banner car__s is-on"><picture><source media="(max-width:760px)" srcset="' + b.imgM + '"><img class="banner__img" src="' + b.img + '" alt="' + esc(b.alt) + '" fetchpriority="high"></picture>' +
       '<div class="wrap banner__in"><div class="banner__box"><h1 class="h1">' + b.h1 + '</h1><p>' + b.p + '</p>' +
       '<a class="motm-mini" href="' + b.motm.h + '"><img src="' + b.motm.img + '" alt=""><span><small>' + b.motm.small + '</small><b>' + b.motm.b + '</b></span></a>' +
-      '<div class="banner__cta">' + b.cta.map(function (c) { return '<a class="btn ' + (c.line ? 'btn--line' : 'btn--cart') + '" href="' + c.h + '">' + c.t + '</a>'; }).join('') + '</div></div></div></section>' +
+      '<div class="banner__cta">' + b.cta.map(function (c) { return '<a class="btn ' + (c.line ? 'btn--line' : 'btn--cart') + '" href="' + c.h + '">' + c.t + '</a>'; }).join('') + '</div></div></div></div>' + carHtml + '<div class="car__ctl"></div></section>' +
       '<div class="usp"><div class="wrap usp__in">' + CONFIG.usp.map(function (u) { return '<span>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</span>'; }).join('') + '</div></div>' +
       sec('Oblíbené kategorie', '<div class="tiles tiles--orig">' + CONFIG.tiles.map(function (t) {
         return '<a class="tile' + (t.c ? ' ' + t.c : '') + '" href="' + t.h + '"><img src="' + IMG + t.img + '" alt="" loading="lazy"><span class="tile__box"><b>' + t.t + '</b><span class="tile__more"><span>' + t.s + '</span></span></span></a>';
       }).join('') + '</div>') +
       sec('Akce', '<div class="whx-slot" data-slot="akce"></div>', ['Celá akce', '/akcni-zbozi/']) +
       sec('Vyberte podle projektu', '<div class="projs">' + CONFIG.projs.map(function (p) {
-        return '<a class="proj" href="' + p.h + '"><span class="proj__img"><img src="' + IMG + p.img + '" alt="" loading="lazy"></span><span class="proj__n">' + p.t + '</span></a>';
+        return '<a class="proj" href="' + esc(p.h) + '"' + (p.links ? ' data-links="' + esc(JSON.stringify(p.links)) + '" data-title="' + esc(p.t) + '"' : '') + '><span class="proj__img"><img src="' + IMG + p.img + '" alt="" loading="lazy"></span><span class="proj__n">' + p.t + '</span></a>';
       }).join('') + '</div>') +
       '<section class="sec"><div class="wrap"><a class="themeband" href="' + CONFIG.theme.h + '"><img src="' + CONFIG.theme.img + '" alt="' + esc(CONFIG.theme.alt) + '" loading="lazy"><span class="themeband__in"><small>' + CONFIG.theme.small + '</small><b>' + CONFIG.theme.b + '</b><span class="btn btn--cart">' + CONFIG.theme.btn + '</span></span></a></div></section>' +
       sec('Novinky', '<div class="whx-slot" data-slot="nov"></div>', ['Všechny novinky', '/novinky-2/']) +
@@ -444,13 +576,14 @@
     var w = box(html, 'main'); w.id = 'whHome';
     after(cw, w);
     var slot = function (n) { return w.querySelector('[data-slot="' + n + '"]'); };
+    initCarousel(w); initProjs(w); initMonth(w);
     /* newsletter – nativní formulář i s captchou */
     var nf = $('#formNewsletterWidget');
     if (nf) { tuneNews(nf); nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news').remove();
     /* akce + novinky */
     var fallback = $$('#content .product').slice(0, 4).map(function (x) { return x.outerHTML; }).join('');
     [['akce', '/akcni-zbozi/'], ['nov', '/novinky-2/']].forEach(function (s) {
-      gridFrom(s[1], 4).then(function (g) { slot(s[0]).replaceWith(g); }).catch(function () {
+      (s[0] === 'akce' ? akceGrid(CONFIG.akceCount) : gridFrom(s[1], 4)).then(function (g) { slot(s[0]).replaceWith(g); }).catch(function () {
         var g = D.createElement('div'); g.className = 'w-pgrid products'; g.innerHTML = fallback; cards(g); slot(s[0]).replaceWith(g);
       });
     });
