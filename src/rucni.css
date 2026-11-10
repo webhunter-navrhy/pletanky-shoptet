@@ -390,8 +390,8 @@ html.wh .p-info-wrapper .w-buy .price-additional{display:block;font-size:13px}
 html.wh .p-info-wrapper .w-buy .add-to-cart{margin:0;flex:1 1 280px;display:flex;align-items:center;gap:12px}
 html.wh .p-info-wrapper .w-buy .add-to-cart .quantity{flex:0 0 auto}
 html.wh .p-info-wrapper .w-buy .add-to-cart-button{flex:1 1 auto}
-html.wh .w-specs--pd .is-sample{background:var(--soft,#f6f1ea)}
-html.wh .w-specs--pd .is-sample dt,html.wh .w-specs--pd .is-sample dd{font-weight:600}
+html.wh .w-specs--pd .w-is-sample{background:var(--soft,#f6f1ea)}
+html.wh .w-specs--pd .w-is-sample dt,html.wh .w-specs--pd .w-is-sample dd{font-weight:600}
 html.wh .w-soc{margin:10px 0 0}
 html.wh .w-pd__med{display:flex;gap:16px;align-items:center;margin:22px 0 0;padding:16px 18px;border:1px solid var(--line,#e3ddd3);border-radius:12px;background:#fff}
 html.wh .w-pd__med img,html.wh .w-pd__med-ph{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:0 0 64px}
@@ -428,10 +428,10 @@ html.wh .p-info-wrapper .w-buy .p-final-price-wrapper{border:0!important;padding
 html.wh .p-info-wrapper .w-buy{align-items:center}
 /* parametry: zkušební vzorek přes dva sloupce, další řádek odděleně */
 html.wh .whx .w-specs--pd div:nth-child(n+4){border-top:1px solid var(--line)!important}
-html.wh .whx .w-specs--pd div.is-wide{grid-column:span 2}
-html.wh .whx .w-specs--pd div.is-wide:nth-child(4){border-left:0!important}
+html.wh .whx .w-specs--pd div.w-is-wide{grid-column:span 2}
+html.wh .whx .w-specs--pd div.w-is-wide:nth-child(4){border-left:0!important}
 html.wh .whx .w-specs--pd{margin-bottom:22px}
-@media(max-width:700px){html.wh .whx .w-specs--pd div.is-wide{grid-column:auto}html.wh .whx .w-specs--pd div:nth-child(n+4){border-top:1px solid var(--line)!important}}
+@media(max-width:700px){html.wh .whx .w-specs--pd div.w-is-wide{grid-column:auto}html.wh .whx .w-specs--pd div:nth-child(n+4){border-top:1px solid var(--line)!important}}
 /* medailonek */
 html.wh .w-pd__med{align-items:flex-start}
 html.wh .w-pd__med b{font-size:17px;font-weight:500}
@@ -462,8 +462,8 @@ html.wh .w-sh--rel .p-prev::after,html.wh .w-sh--rel .p-next::after{display:none
 html.wh .w-sh--rel .p-prev.inactive{opacity:.35;cursor:default}
 html.wh .w-sh--rel .p-prev:hover:not(.inactive),html.wh .w-sh--rel .p-next:hover:not(.inactive){border-color:var(--ink)!important}
 /* parametry: spodní řádek přes celou šířku */
-html.wh .whx .w-specs--pd div.is-wide{grid-column:1/-1}
-html.wh .whx .w-specs--pd div.is-wide:nth-child(n){border-left:0!important}
+html.wh .whx .w-specs--pd div.w-is-wide{grid-column:1/-1}
+html.wh .whx .w-specs--pd div.w-is-wide:nth-child(n){border-left:0!important}
 /* newsletter: e-mail + tlačítko v řádku, kontrola pod tím, vše uceleně */
 html.wh .w-news__native{display:block!important;max-width:560px;margin:22px auto 0;text-align:left}
 html.wh .w-news__native>fieldset{display:grid!important;grid-template-columns:1fr auto;gap:12px;align-items:start}
