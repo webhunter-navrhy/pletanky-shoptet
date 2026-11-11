@@ -429,7 +429,7 @@
   /* newsletter: popisky jako zástupný text, vlastní text tlačítka */
   function tuneNews(nf) {
     var em = nf.querySelector('input[type=email]'); if (em) { em.setAttribute('placeholder', 'Váš e-mail'); em.setAttribute('aria-label', 'Váš e-mail'); }
-    var cp = nf.querySelector('input[name=captcha]'); if (cp) { cp.setAttribute('placeholder', 'Opište text z obrázku'); cp.setAttribute('aria-label', 'Opište text z obrázku'); }
+    var cp = nf.querySelector('input[name=captcha]'); if (cp) { cp.setAttribute('placeholder', window.innerWidth < 480 ? 'Text z obrázku' : 'Opište text z obrázku'); cp.setAttribute('aria-label', 'Opište text z obrázku'); }
     var bt = nf.querySelector('button[type=submit]'); if (bt) bt.textContent = CONFIG.newsBtn;
   }
 
