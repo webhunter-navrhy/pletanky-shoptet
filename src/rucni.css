@@ -533,11 +533,7 @@ html.wh .whx .w-rail--no .w-rail__track{justify-content:flex-start}
 html.wh .whx .w-rail__track.w-pgrid>*{flex:0 0 calc((100% - 84px)/4)!important;width:auto!important;min-width:0!important}
 html.wh .whx .w-rail--projs .w-projs{display:flex!important;gap:16px;margin:0;padding:0}
 html.wh .whx .w-rail--projs .w-projs>.w-proj{flex-basis:calc((100% - 96px)/7);min-width:130px}
-html.wh .whx .w-rail--ig .w-film__track{animation:none!important;width:auto;gap:8px}
-html.wh .whx .w-rail--ig .w-film__i{width:240px}
 html.wh .whx .w-film{overflow:visible}
-html.wh .whx .w-rail--rv .w-rvs__grid--rail,html.wh .whx .w-rvs__grid--rail.w-rail__track{display:flex!important;gap:16px}
-html.wh .whx .w-rvs__grid--rail>.w-rv{flex:0 0 340px;max-width:82vw}
 @media(max-width:1000px){html.wh .whx .w-rail__track.w-pgrid>*{flex:0 0 calc((100% - 56px)/3)!important}}
 @media(max-width:760px){
   html.wh .whx .w-rail__track{gap:12px}
@@ -546,24 +542,6 @@ html.wh .whx .w-rvs__grid--rail>.w-rv{flex:0 0 340px;max-width:82vw}
   html.wh .whx .w-rail__prev{left:4px}html.wh .whx .w-rail__next{right:4px}
   html.wh .whx .w-rail--projs .w-projs>.w-proj{flex-basis:42%}
 }
-
-/* ===== recenze: jeden řádek, kompaktní shrnutí, barvy přes proměnné ===== */
-html.wh .whx .w-rvs{--rv-bg:#fff;--rv-border:var(--line);--rv-sum-bg:var(--alt);--rv-star:var(--star);display:flex;flex-direction:column;gap:18px}
-html.wh .whx .w-rvs__sum{display:flex;align-items:center;gap:16px;flex-wrap:wrap;width:100%;padding:12px 20px;text-align:left;background:var(--rv-sum-bg);border:1px solid var(--rv-border);cursor:pointer;font:inherit;color:inherit}
-html.wh .whx .w-rvs__score{font-size:30px;margin:0}
-html.wh .whx .w-rvs__cnt{margin:0;flex:1 1 auto}
-html.wh .whx .w-rvs__sum .w-stars--lg .w-ico--star{width:18px;height:18px}
-html.wh .whx .w-rvs__t1,html.wh .whx .w-rvs__t2{font-size:13px;text-decoration:underline;color:var(--accent)}
-html.wh .whx .w-rvs__t2{display:none}
-html.wh .whx .w-rvs.w-is-all .w-rvs__t1{display:none}
-html.wh .whx .w-rvs.w-is-all .w-rvs__t2{display:inline}
-html.wh .whx .w-rvs__all{display:none}
-html.wh .whx .w-rvs.w-is-all .w-rvs__all{display:block}
-html.wh .whx .w-rvs__rest{display:none}
-html.wh .whx .w-rvs.w-is-all .w-rvs__rest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
-html.wh .whx .w-rv{background:var(--rv-bg);border-color:var(--rv-border)}
-html.wh .whx .w-stars{color:var(--rv-star)}
-@media(max-width:760px){html.wh .whx .w-rvs.w-is-all .w-rvs__rest{grid-template-columns:1fr}}
 
 /* ===== bod 3: carousel – šipky na okraje stránky, dole jen tečky ===== */
 html.wh .whx .w-car__ctl{inset:0;bottom:0;display:block}
@@ -592,3 +570,80 @@ html.wh .whx .w-news-simple input{flex:1 1 auto;min-width:0;height:50px;border:1
 html.wh .whx .w-news-simple button{height:50px;padding:0 22px;white-space:nowrap}
 @media(max-width:560px){html.wh .whx .w-news-simple{flex-direction:column}}
 @media(max-width:760px){html.wh .whx .w-car__b{top:100px;width:32px;height:32px}html.wh .whx .w-car__prev{left:6px}html.wh .whx .w-car__next{right:6px}}
+
+/* ===== 7. kolo (12. 11.): popisek jako v administraci + tabulka parametrů ===== */
+html.wh .whx .w-pd__desc{margin:14px 0 18px;font-size:15px;line-height:1.6;color:var(--ink)}
+html.wh .whx .w-pd__desc p{margin:0 0 10px}
+html.wh .whx .w-pd__desc p:last-child{margin-bottom:0}
+html.wh .whx .w-pd__desc a,html.wh .p-short-description.w-sd-own a{color:var(--accent-h);text-decoration:underline;text-underline-offset:3px}
+html.wh .whx .w-pd__desc a:hover{color:var(--ink)}
+html.wh .whx .w-pd__desc strong,html.wh .whx .w-pd__desc b{font-weight:600}
+html.wh .whx .w-pd__desc--after{margin:-4px 0 20px}
+html.wh .whx .w-ptab{display:grid;grid-template-columns:repeat(3,auto);margin:0 0 20px;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+html.wh .whx .w-ptab>div{display:flex;flex-direction:column;justify-content:flex-start;gap:3px;padding:10px 14px;min-width:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);line-height:1.35}
+html.wh .whx .w-ptab dt{margin:0;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-h);white-space:nowrap}
+html.wh .whx .w-ptab dd{margin:0;font-size:15px;font-weight:400;color:var(--ink);white-space:nowrap;overflow:hidden}
+html.wh .whx .w-ptab dd.w-wrap{white-space:normal;overflow:visible}
+html.wh .whx .w-ptab .w-ptab__wide{grid-column:1/-1}
+@media(max-width:700px){
+  html.wh .whx .w-ptab{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html.wh .whx .w-ptab>div:first-child{grid-column:1/-1}
+}
+/* tabulka, kterou klientka vloží přímo do popisku v administraci */
+html.wh .p-short-description.w-sd-own{display:block!important;margin:14px 0 20px;font-size:15px;line-height:1.6;color:var(--ink)}
+html.wh .p-short-description.w-sd-own p{margin:0 0 10px}
+html.wh .p-short-description.w-sd-own table{width:100%!important;border-collapse:collapse;margin:6px 0 14px;font-size:15px}
+html.wh .p-short-description.w-sd-own td,html.wh .p-short-description.w-sd-own th{border:1px solid var(--line);padding:9px 14px;vertical-align:top;text-align:left}
+html.wh .p-short-description.w-sd-own th,html.wh .p-short-description.w-sd-own td strong,html.wh .p-short-description.w-sd-own td b{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-h)}
+/* Napište nám pod dopravou */
+html.wh .whx .w-pd__usp a{color:inherit;text-decoration:none}
+html.wh .whx .w-pd__usp a:hover{color:var(--accent-h);text-decoration:underline}
+html.wh .w-pd__med{display:none!important}
+
+/* ===== 7. kolo: recenze – rámeček shrnutí vlevo (menší), vpravo jeden posuvný řádek; barvy v proměnných ===== */
+html.wh .whx .w-rvs{--rv-bg:#fff;--rv-border:var(--line);--rv-sum-bg:var(--alt);--rv-star:var(--star);display:grid;grid-template-columns:236px minmax(0,1fr);gap:40px;align-items:stretch}
+html.wh .whx .w-rvs__sum{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;text-align:center;background:var(--rv-sum-bg);border:1px solid var(--rv-border);color:var(--ink);text-decoration:none;transition:border-color .2s}
+html.wh .whx .w-rvs__sum:hover{border-color:var(--ink)}
+html.wh .whx .w-rvs__score{font-size:48px;font-weight:300;line-height:1;margin:0 0 8px}
+html.wh .whx .w-rvs__cnt{margin:8px 0 14px;font-size:14px;color:var(--muted)}
+html.wh .whx .w-rvs__dist{width:100%;margin:0 0 16px}
+html.wh .whx .w-rvs__go{display:inline-flex;align-items:center;gap:6px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-h);border-bottom:1px solid currentColor;padding-bottom:2px}
+html.wh .whx .w-rvs__main{display:flex;flex-direction:column;min-width:0}
+html.wh .whx .w-rvs__main .w-tabs__panel{display:none}
+html.wh .whx .w-rvs__main .w-tabs__panel.w-is-on{display:flex;flex:1;flex-direction:column}
+html.wh .whx .w-rvs__main .w-rail{flex:1;display:flex}
+html.wh .whx .w-rvs__grid--rail.w-rail__track{display:flex!important;grid-template-columns:none;gap:16px;width:100%;align-items:stretch}
+html.wh .whx .w-rvs__grid--rail>.w-rv{flex:0 0 calc((100% - 32px)/3)!important;min-width:0;background:var(--rv-bg);border-color:var(--rv-border)}
+html.wh .whx .w-rv blockquote p{margin:0 0 8px}
+html.wh .whx .w-rv blockquote p:last-child{margin:0}
+html.wh .whx .w-rv blockquote a{color:var(--accent-h);text-decoration:underline}
+html.wh .whx .w-stars{color:var(--rv-star)}
+/* šipky na středu řádku recenzí, vždy navrchu */
+html.wh .whx .w-rail--rv .w-rail__prev{left:-22px}
+html.wh .whx .w-rail--rv .w-rail__next{right:-22px}
+@media(max-width:1000px){html.wh .whx .w-rvs__grid--rail>.w-rv{flex-basis:calc((100% - 16px)/2)!important}}
+@media(max-width:760px){
+  html.wh .whx .w-rvs{grid-template-columns:1fr;gap:20px}
+  html.wh .whx .w-rvs__sum{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:22px;row-gap:2px;align-items:center;padding:16px 16px 14px;text-align:center}
+  html.wh .whx .w-rvs__score{font-size:38px;grid-column:1;margin:0 0 4px}
+  html.wh .whx .w-rvs__sum>.w-stars{grid-column:1}
+  html.wh .whx .w-rvs__cnt{grid-column:1;margin:4px 0 0;font-size:13px}
+  html.wh .whx .w-rvs__dist{grid-column:2;grid-row:1/4;margin:0}
+  html.wh .whx .w-rvs__go{grid-column:1/-1;justify-self:center;margin-top:12px}
+  html.wh .whx .w-rvs__tabs{gap:18px}
+  html.wh .whx .w-rvs__tabs button{white-space:nowrap;font-size:12px;letter-spacing:.06em}
+  html.wh .whx .w-rvs__grid--rail>.w-rv{flex-basis:84%!important}
+  html.wh .whx .w-rail--rv .w-rail__prev{left:-6px}html.wh .whx .w-rail--rv .w-rail__next{right:-6px}
+}
+
+/* ===== 7. kolo: Instagram – jeden souvislý pás bez mezer, jede sám, šipky u okrajů ===== */
+html.wh .whx .w-film{overflow:visible}
+html.wh .whx .w-rail--ig .w-film__track{animation:none!important;width:auto;gap:0!important;scroll-snap-type:none!important;scroll-behavior:auto!important}
+html.wh .whx .w-rail--ig .w-film__i{width:260px;flex:0 0 260px!important;scroll-snap-align:none}
+html.wh .whx .w-rail--ig .w-rail__prev{left:16px}
+html.wh .whx .w-rail--ig .w-rail__next{right:16px}
+@media(max-width:760px){html.wh .whx .w-rail--ig .w-film__i{width:160px;flex-basis:160px!important}html.wh .whx .w-rail--ig .w-rail__prev{left:6px}html.wh .whx .w-rail--ig .w-rail__next{right:6px}}
+
+/* ===== 7. kolo (bod 8 z 11. 11.): celkově o kousek větší a výraznější písmo ===== */
+html.wh{--muted:#5f5456}
+html.wh body{font-size:16px}

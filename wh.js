@@ -67,9 +67,7 @@
       { h: 'Nakupování', l: [['Doprava a platby', '/doprava/'], ['Obchodní podmínky', '/obchodni-podminky/'], ['Ochrana osobních údajů', '/podminky-ochrany-osobnich-udaju/'], ['Dárkové poukazy', '/darkove-poukazy/']] }
     ],
     /* detail produktu pod tlačítkem (jako v návrhu); [ikona, text] */
-    /* medailonek na detailu produktu: jméno, text a fotka (img: odkaz na fotku, prázdné = písmeno) – upravitelné zde */
-    medailon: { name: '', img: '', title: 'Potřebujete poradit?', text: 'Napište nám, rádi vám pomůžeme s výběrem, orientační spotřebou a jinými dotazy ohledně tvoření. Na emaily odpovídáme téměř 24/7. Na telefonu jsme k dispozici 8 – 18 h.', email: 'info@pletanky.cz', tel: '799 557 080' },
-    usps: [['truck', 'Doprava zdarma od 2&nbsp;000&nbsp;Kč']],
+    usps: [['truck', 'Doprava zdarma od 2&nbsp;000&nbsp;Kč'], ['mail', '<a href="mailto:info@pletanky.cz">Nevíte si rady s výběrem? Napište nám</a>']],
     swatchMax: 11
   };
 
@@ -137,11 +135,11 @@
   function logoHtml(tag) { return '<' + (tag || 'a') + ' class="logo" href="/"><img src="' + esc(logoSrc) + '" alt="Pletánky.cz"></' + (tag || 'a') + '>'; }
 
   /* ---------- popisky produktů: složení / návin / jehlice ---------- */
-  var KEYS = /(Složení|Hmotnost klubíčka|Hmotnost|Váha\s*\/\s*návin|Váha|Návin|Délka|Doporučená síla jehlic|Doporučená velikost jehlic|Síla jehlic|Velikost jehlic|Jehlice\s*\/\s*háček|Háček\s*\/\s*jehlice|Jehlice|Doporučená velikost háčku|Doporučená síla háčku|Síla háčku|Velikost háčku|Háček|Skupina přízí|Zkušební vzorek|Instagram)\s*:\s*/gi;
+  var KEYS = /(Složení|Skupina přízí|Hmotnost klubíčka|(?:Váha|Hmotnost)\s*\/\s*návin|Hmotnost|Váha|Návin|Doporučen[áéý]\s+(?:síla|velikost)\s+jehlic\s*\/\s*háčku|Doporučené\s+jehlice\s*\/\s*háček|Doporučen[áéý]\s+(?:síla|velikost)\s+jehlic|Doporučené\s+jehlice|Síla jehlic|Velikost jehlic|Jehlice\s*\/\s*háček|Háček\s*\/\s*jehlice|Jehlice|Doporučen[áéý]\s+(?:velikost|síla)\s+háčku|Doporučený\s+háček|Síla háčku|Velikost háčku|Háček|Zkušební vzorek|Spotřeba|Instagram)\s*:\s*/gi;
   function norm(k) {
     k = k.toLowerCase().replace(/\s+/g, ' ');
     if (k.indexOf('složení') === 0) return 's';
-    if (/váha ?\/ ?návin/.test(k)) return 'wn';
+    if (/(váha|hmotnost) ?\/ ?návin/.test(k)) return 'wn';
     if (k.indexOf('hmotnost') === 0 || k === 'váha') return 'w';
     if (k === 'návin' || k === 'délka') return 'n';
     if (k.indexOf('jehlic') > -1 && k.indexOf('háč') > -1) return 'jh';
@@ -151,27 +149,95 @@
     if (k.indexOf('zkušební') === 0) return 'v';
     return 'x';
   }
+  /* text z administrace po řádcích: zachová Enter (br), odstavce, odrážky, odkazy a tučné písmo */
   function htmlLines(el) {
-    var lines = [], cur = { h: '', t: '' };
-    function flush() { if (cur.t.replace(/\s+/g, '').length) lines.push({ html: cur.h.replace(/^\s+|\s+$/g, ''), text: cur.t.replace(/\s+/g, ' ').trim() }); cur = { h: '', t: '' }; }
+    var lines = [], cur = '', curT = '', gap = false, stack = [];
+    function opens() { return stack.map(function (s) { return s.o; }).join(''); }
+    function closes() { return stack.slice().reverse().map(function (s) { return s.c; }).join(''); }
+    function flush(brk) {
+      if (curT.replace(/[\s ]+/g, '').length) {
+        var h = (cur + closes()).replace(/<(a|strong|b|em|i|u)\b[^>]*>(\s|&nbsp;)*<\/\1>/g, '').replace(/^(\s|&nbsp;)+|(\s|&nbsp;)+$/g, '');
+        lines.push({ html: h, text: curT.replace(/[\s ]+/g, ' ').trim(), gap: gap && lines.length > 0 }); gap = false;
+      } else if (brk && lines.length) gap = true; /* prázdný řádek (dvakrát Enter) = mezera */
+      cur = opens(); curT = '';
+    }
     function walk(n) {
-      if (n.nodeType === 3) { var s = n.nodeValue.replace(/\s+/g, ' '); cur.h += esc(s); cur.t += s; return; }
+      if (n.nodeType === 3) { var s = n.nodeValue.replace(/\s+/g, ' '); cur += esc(s); curT += s; return; }
       if (n.nodeType !== 1) return;
       var tg = n.tagName.toLowerCase();
-      if (tg === 'br') { flush(); return; }
-      if (tg === 'script' || tg === 'style') return;
+      if (tg === 'br') { flush(true); return; }
+      if (/^(script|style|img|svg|iframe)$/.test(tg)) return;
       var blk = /^(div|p|ul|ol|li|h[1-6]|table|tr|blockquote)$/.test(tg);
-      if (blk) flush();
-      if (tg === 'li') { cur.h += '• '; cur.t += '• '; }
-      var open = '', close = '';
-      if (tg === 'a' && n.getAttribute('href')) { open = '<a href="' + esc(n.getAttribute('href')) + '" target="_blank" rel="noopener">'; close = '</a>'; }
-      else if (/^(strong|b|em|i|u)$/.test(tg)) { open = '<' + tg + '>'; close = '</' + tg + '>'; }
-      cur.h += open; Array.prototype.forEach.call(n.childNodes, walk); cur.h += close;
-      if (blk) flush();
+      if (blk) { flush(); if (tg !== 'li' && lines.length) gap = true; }
+      if (tg === 'li') { cur += '• '; curT += '• '; }
+      var t = null;
+      if (tg === 'a' && n.getAttribute('href')) {
+        var tb = n.getAttribute('target') === '_blank';
+        t = { o: '<a href="' + esc(n.getAttribute('href')) + '"' + (tb ? ' target="_blank" rel="noopener"' : '') + '>', c: '</a>' };
+      } else if (/^(strong|b|em|i|u)$/.test(tg)) t = { o: '<' + tg + '>', c: '</' + tg + '>' };
+      if (t) { cur += t.o; stack.push(t); }
+      Array.prototype.forEach.call(n.childNodes, walk);
+      if (t) { stack.pop(); cur += t.c; }
+      if (blk) { flush(); if (tg !== 'li') gap = true; }
     }
     walk(el); flush(); return lines;
   }
-  function rich(el) { return el ? htmlLines(el).map(function (x) { return x.html; }).join('<br>') : ''; }
+  function linesHtml(ls) {
+    var out = '', p = [];
+    ls.forEach(function (x) { if (x.gap && p.length) { out += '<p>' + p.join('<br>') + '</p>'; p = []; } p.push(x.html); });
+    if (p.length) out += '<p>' + p.join('<br>') + '</p>';
+    return out;
+  }
+  function rich(el) { return el ? linesHtml(htmlLines(el)) : ''; }
+  /* parametry příze po řádcích „Popisek: hodnota“ – každý údaj má v tabulce pevné místo */
+  var LBL = /^([^:]{2,60}?)\s*:\s*/;
+  function lkey(l) {
+    l = l.toLowerCase().replace(/\s+/g, ' ').trim();
+    if (/^složení$/.test(l)) return 's';
+    if (/^skupina příz/.test(l)) return 'g';
+    if (/^(váha|hmotnost)( klubíčka| klubka)? ?\/ ?návin$/.test(l)) return 'wn';
+    if (/^(hmotnost|váha)( klubíčka| klubka| přadena)?$/.test(l)) return 'w';
+    if (/^návin$/.test(l)) return 'n';
+    if (/^zkušební vzorek/.test(l)) return 'v';
+    if (l.length < 45 && /^(doporučen[áéý] |velikost |síla )?(síla |velikost )?(jehlic|jehlice|háč)/.test(l)) { var j = /jehlic/.test(l), h = /háč/.test(l); return j && h ? 'jh' : (j ? 'j' : 'h'); }
+    return '';
+  }
+  function parseLines(lines) {
+    var v = {}, pre = [], post = [], seen = false;
+    lines.forEach(function (x) {
+      var m0 = LBL.exec(x.text), k0 = m0 ? lkey(m0[1]) : '';
+      var segs = k0 === 'v' ? [x.text] : x.text.split(/;\s*(?=[^\s:;][^:;]{1,45}:)/);
+      var ks = segs.map(function (s) { var m = LBL.exec(s); return m ? lkey(m[1]) : ''; });
+      segs.forEach(function (s, i) { if (!ks[i]) return; var val = s.replace(LBL, '').replace(/[\s;,.]+$/, '').trim(); if (val && !v[ks[i]]) v[ks[i]] = val; });
+      if (ks.every(Boolean)) { seen = true; return; }
+      (seen ? post : pre).push(x);
+    });
+    if (post.length) post[0] = { html: post[0].html, text: post[0].text, gap: false };
+    return { v: v, pre: pre, post: post };
+  }
+  function ptab(v) {
+    var nav = v.wn ? v.wn.replace(/\s*gramů/, ' g') : (v.w && v.n ? v.w + ' = ' + v.n : (v.w || v.n || ''));
+    var nd = v.jh || (v.j && v.h ? v.j + ' / ' + v.h : (v.j || v.h || ''));
+    var nl = (v.jh || (v.j && v.h) || (!v.j && !v.h)) ? 'Jehlice / háček' : (v.j ? 'Jehlice' : 'Háček');
+    var r = [['Složení', v.s ? pct(v.s) : '–'], ['Návin', nav || '–'], [nl, nd || '–']];
+    var ok = [v.s, nav, nd].filter(Boolean).length >= 2;
+    var wide = (v.g || v.v) ? '<div class="ptab__wide"><dt>' + [v.g ? 'Typ příze' : '', v.v ? 'Zkušební vzorek' : ''].filter(Boolean).join(' · ') + '</dt><dd>' + esc([v.g, v.v].filter(Boolean).join(' · ')) + '</dd></div>' : '';
+    return ok ? '<dl class="ptab">' + r.map(function (x) { return '<div><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + wide + '</dl>' : '';
+  }
+  /* hodnoty v jednom řádku: když se nevejdou, písmo se jednotně zmenší (min. 12 px), až pak se zalomí */
+  function fitTab(dl) {
+    if (!dl) return;
+    var top = $$('div:not(.w-ptab__wide) dd', dl), wide = $$('.w-ptab__wide dd', dl);
+    var fit = function (dds) {
+      if (!dds.length) return;
+      dl.classList.remove('w-ptab--wrap');
+      var fs = 16, over = function () { return dds.some(function (d) { return d.scrollWidth > d.clientWidth + 1; }); };
+      dds.forEach(function (d) { d.style.fontSize = ''; d.classList.remove('w-wrap'); });
+      while (over() && fs > 12) { fs -= 0.5; dds.forEach(function (d) { d.style.fontSize = fs + 'px'; }); }
+      if (over()) dds.forEach(function (d) { d.classList.add('w-wrap'); });
+    };
+    fit(top); fit(wide);
+  }
   function parseDesc(t) {
     t = String(t || '').replace(/ /g, ' ');
     var trunc = /(\.\.\.|…)\s*$/.test(t);
@@ -212,13 +278,14 @@
     return rows.length ? '<dl class="' + c + '">' + rows.map(function (r) { return '<div' + (/zkušební vzorek$|^Typ příze$/.test(r[0]) ? ' class="is-sample is-wide"' : '') + '><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' : '';
   }
   function fullDesc(href) {
-    var k = 'whd:' + href, c = cacheGet(k, 864e5, 's');
+    var k = 'whd2:' + href, c = cacheGet(k, 864e5, 's');
     if (c != null) return Promise.resolve(c);
     return getDoc(href).then(function (doc) {
       var e = doc.querySelector('.p-short-description');
-      var t = '';
-      if (e) { var cl = e.cloneNode(true); $$('br', cl).forEach(function (b) { b.replaceWith('\n'); }); $$('p', cl).forEach(function (p) { p.append('\n'); }); t = cl.textContent; }
-      cacheSet(k, t, 's'); return t;
+      var r = { v: {}, lead: '' };
+      if (e) { var pl = parseLines(htmlLines(e)); r.v = pl.v; r.lead = pl.pre.length ? pl.pre[0].text : ''; }
+      if (r.lead.length > 140) r.lead = r.lead.slice(0, 137).replace(/\s\S*$/, '') + '…';
+      cacheSet(k, r, 's'); return r;
     });
   }
 
@@ -283,9 +350,9 @@
     prod.appendChild(w);
     if (canHover && href && href !== '#' && (d.trunc || !rows.length || !d.lead)) {
       var load = function () {
-        return fullDesc(href).then(function (t) {
-          if (!t) return;
-          var f = parseDesc(t), r = specRows(f.v);
+        return fullDesc(href).then(function (f) {
+          if (!f) return;
+          var r = specRows(f.v);
           var lead = more.querySelector('.w-pc__lead');
           if (f.lead && !lead) { lead = D.createElement('p'); lead.className = 'w-pc__lead'; more.insertBefore(lead, more.firstChild); }
           if (f.lead) lead.textContent = f.lead;
@@ -311,9 +378,11 @@
     wr.appendChild(pv); wr.appendChild(track); wr.appendChild(nx);
     var upd = function () {
       var m = track.scrollWidth - track.clientWidth - 2;
-      cls(wr, 'w-rail--no', m <= 0); pv.disabled = track.scrollLeft <= 2; nx.disabled = track.scrollLeft >= m;
+      cls(wr, 'w-rail--no', m <= 0);
+      if (cfg.loop) { pv.disabled = nx.disabled = false; return; }
+      pv.disabled = track.scrollLeft <= 2; nx.disabled = track.scrollLeft >= m;
     };
-    var go = function (d) { track.scrollBy({ left: d * Math.max(200, track.clientWidth * 0.85), behavior: 'smooth' }); };
+    var go = cfg.go || function (d) { track.scrollBy({ left: d * Math.max(200, track.clientWidth * 0.85), behavior: 'smooth' }); };
     on(pv, 'click', function () { go(-1); }); on(nx, 'click', function () { go(1); });
     on(track, 'scroll', upd); window.addEventListener('resize', upd);
     setTimeout(upd, 60); setTimeout(upd, 800); setTimeout(upd, 2500);
@@ -686,13 +755,12 @@
         return '<figure class="rv rv--prod"><a class="rv__p" href="' + esc(x.h) + '">' + (x.i ? '<img src="' + esc(x.i) + '" alt="" loading="lazy">' : '') + '<span>' + esc(x.n) + '</span></a>' + stars(x.st) + (x.d ? '<blockquote>' + x.d + '</blockquote>' : '') + '<figcaption><b>' + esc(x.a) + '</b><span>' + esc(x.t) + '</span></figcaption></figure>';
       });
       if (!vs.length) { slot('rvs').remove(); return; }
-      var RV = 10, part = function (l, cls2) {
-        return '<div class="rvs__grid rvs__grid--rail ' + (cls2 || '') + '">' + l.slice(0, 40).join('') + '</div>';
-      };
-      var node = box(sec('Recenze zákazníků', '<div class="rvs"><div class="rvs__sum"><span class="rvs__score">' + esc(avg || '5,0') + '</span>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
-        '<span class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</span><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line" href="/hodnoceni-obchodu/">Všechna hodnocení</a></div>' +
+      var RV = 10, part = function (l) { return '<div class="rvs__grid rvs__grid--rail">' + l.slice(0, RV).join('') + '</div>'; };
+      var node = box(sec('Recenze zákazníků', '<div class="rvs">' +
+        '<a class="rvs__sum" href="/hodnoceni-obchodu/" title="Zobrazit všechna hodnocení obchodu"><span class="rvs__score">' + esc(avg || '5,0') + '</span>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
+        '<span class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</span><ul class="rvs__dist">' + dist + '</ul><span class="rvs__go">Zobrazit všechna ' + svg('ico--sm', P.right) + '</span></a>' +
         '<div class="rvs__main" data-tabs>' + (pcm.length ? '<div class="rvs__tabs" role="tablist"><button class="is-on" type="button" data-tab="0">Hodnocení obchodu</button><button type="button" data-tab="1">Komentáře k produktům</button></div>' : '') +
-        '<div class="tabs__panel is-on">' + part(vs) + '</div>' + (pcm.length ? '<div class="tabs__panel">' + part(pcm, 'rvs__grid--3') + '</div>' : '') + '</div></div>'));
+        '<div class="tabs__panel is-on">' + part(vs) + '</div>' + (pcm.length ? '<div class="tabs__panel">' + part(pcm) + '</div>' : '') + '</div></div>'));
       $$('.w-rvs__grid--rail', node).forEach(function (g) { var ph = D.createElement('span'); g.replaceWith(ph); ph.replaceWith(rail(g, { c: 'w-rail--rv' })); });
       slot('rvs').replaceWith(node);
       $$('.w-rvs__tabs [data-tab]', node).forEach(function (b) { b.addEventListener('click', function () {
@@ -702,12 +770,42 @@
         setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30);
       }); });
     }).catch(function () { slot('rvs').remove(); });
-    /* instagram */
+    /* instagram: souvislý pás, sám jede dokola (zastaví se pod myší / prstem), šipky listují oběma směry */
     var ig = $$('.instagram-widget a').map(function (a) { var i = a.querySelector('img'); return { h: a.getAttribute('href'), i: i ? (i.getAttribute('data-thumbnail-medium') || imgOf(i)) : '' }; }).filter(function (x) { return x.i; });
     if (ig.length) {
-      var it = ig.map(function (x) { return '<a class="film__i" href="' + esc(x.h) + '" target="_blank" rel="noopener"><img src="' + esc(x.i) + '" alt="Příspěvek @pletanky" loading="lazy"></a>'; }).join('');
+      var one = ig.map(function (x) { return '<a class="film__i" href="' + esc(x.h) + '" target="_blank" rel="noopener"><img src="' + esc(x.i) + '" alt="Příspěvek @pletanky" loading="lazy"></a>'; }).join('');
+      var copies = Math.max(3, Math.ceil(3200 / (ig.length * 160)) + 1), it = '';
+      for (var c = 0; c < copies; c++) it += one;
       slot('ig').replaceWith(box('<section class="sec sec--film"><div class="wrap"><div class="sh"><h2 class="h2">Instagram <a href="' + CONFIG.instagram + '" target="_blank" rel="noopener">@pletanky</a></h2></div></div><div class="film"><div class="film__track">' + it + '</div></div></section>'));
-      var ft = $('.w-film__track'); if (ft) { var fp = D.createElement('span'); ft.replaceWith(fp); fp.replaceWith(rail(ft, { c: 'w-rail--ig' })); }
+      var ft = $('.w-film__track');
+      if (ft) {
+        var pos = 0, hold = false, tw = null, last = 0, n1 = ig.length;
+        var per = function () { var a0 = ft.children[0], an = ft.children[n1]; return (a0 && an) ? an.offsetLeft - a0.offsetLeft : 0; };
+        var wrapPos = function () { var P1 = per(); if (P1 > 0) { while (pos >= P1 * 2) pos -= P1; while (pos < P1) pos += P1; } };
+        var setPos = function () { wrapPos(); ft.scrollLeft = Math.round(pos); };
+        var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+        var step = function (t) {
+          var dt = last ? Math.min(64, t - last) : 0; last = t;
+          if (!hold && !tw && !reduce && !D.hidden) { pos += dt * 0.035; setPos(); }
+          requestAnimationFrame(step);
+        };
+        var goIg = function (d) {
+          var from = pos, to = pos + d * Math.max(160, ft.clientWidth * 0.6), t0 = 0;
+          if (tw) cancelAnimationFrame(tw);
+          var f = function (t) { if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 520), e = 1 - Math.pow(1 - k, 3); pos = from + (to - from) * e; setPos(); tw = k < 1 ? requestAnimationFrame(f) : null; };
+          tw = requestAnimationFrame(f);
+        };
+        var fp = D.createElement('span'); ft.replaceWith(fp); fp.replaceWith(rail(ft, { c: 'w-rail--ig', loop: 1, go: goIg }));
+        var film = ft.closest('.w-film') || ft.parentNode;
+        on(film, 'mouseenter', function () { hold = true; }); on(film, 'mouseleave', function () { hold = false; });
+        on(ft, 'touchstart', function () { hold = true; }); on(ft, 'touchend', function () { setTimeout(function () { hold = false; }, 2500); });
+        on(ft, 'focusin', function () { hold = true; }); on(ft, 'focusout', function () { hold = false; });
+        /* ruční posun (prst, trackpad) převezme pozici */
+        on(ft, 'scroll', function () { if (!tw && Math.abs(ft.scrollLeft - Math.round(pos)) > 2) { pos = ft.scrollLeft; var P1 = per(); if (P1 > 0 && (pos < P1 * 0.5 || pos > P1 * 2.2)) setPos(); } });
+        var start = function () { pos = per(); setPos(); requestAnimationFrame(step); };
+        if (D.readyState === 'complete') setTimeout(start, 50); else window.addEventListener('load', function () { setTimeout(start, 50); });
+        window.addEventListener('resize', setPos);
+      }
     } else slot('ig').remove();
   }
 
@@ -799,48 +897,48 @@
     var brandA = $('.p-detail-info a[href*="/znacka/"]');
     var brand = brandA ? txt(brandA) : '';
     var sdEl = $('.p-short-description');
-    var sd = '';
     var sdLines = sdEl ? htmlLines(sdEl) : [];
-    sd = sdLines.map(function (x) { return x.text; }).join('\n');
-    var d = parseDesc(sd);
-    /* řádky mimo tabulku (spotřeba, volný text, odkazy) zůstávají jak je v administraci */
-    var KEYA = new RegExp('^\\s*' + KEYS.source, 'i');
-    var freeLines = sdLines.filter(function (x) { var km = KEYA.exec(x.text); return !(km && norm(km[1]) !== 'x'); });
+    /* tabulka vložená přímo do popisku v administraci se zobrazí tak, jak je (jen v našem stylu) */
+    var ownTable = !!(sdEl && sdEl.querySelector('table'));
+    var yarn = cr.items.some(function (x) { return /příz/i.test(x.t); });
+    var pl = parseLines(sdLines);
     var fdEl = $('.shp-tabs-wrapper .basic-description') || $('#description');
-    if (fdEl) {
-      var fc = fdEl.cloneNode(true); $$('br', fc).forEach(function (b) { b.replaceWith('\n'); }); $$('p,div,li', fc).forEach(function (p) { p.append('\n'); });
-      var d2 = parseDesc(fc.textContent);
-      ['v', 'g', 's', 'wn', 'w', 'n', 'j', 'h', 'jh'].forEach(function (k) { if (!d.v[k] && d2.v[k]) d.v[k] = d2.v[k]; });
+    if (fdEl && yarn && !ownTable) {
+      var p2 = parseLines(htmlLines(fdEl));
+      ['v', 'g', 's', 'wn', 'w', 'n', 'j', 'h', 'jh'].forEach(function (k) { if (!pl.v[k] && p2.v[k]) pl.v[k] = p2.v[k]; });
     }
+    var tabHtml = (yarn && !ownTable) ? ptab(pl.v) : '';
     if (info && h1) {
       var head = box('<p class="pd__brand">' + (brand ? (brandA ? '<a href="' + esc(brandA.getAttribute('href')) + '">' + esc(brand) + '</a>' : esc(brand)) : '') + (brand && code ? ' · ' : '') + (code ? 'Kód ' + esc(code) : '') + '</p>');
       info.insertBefore(head, info.firstChild);
       var h1c = D.createElement('div'); h1c.className = 'whx'; info.insertBefore(h1c, head.nextSibling); h1c.appendChild(h1); h1.classList.add('w-h1', 'w-h1--pd');
       var stw = $('.p-detail-info .stars-wrapper'); if (stw) after(h1c, stw);
-      var l = null;
-      if (freeLines.length) { l = box('<div class="pd__lead pd__lead--free">' + freeLines.map(function (x) { return '<p>' + x.html + '</p>'; }).join('') + '</div>'); after(stw || h1c, l); }
       var atc = $('.add-to-cart', info);
       var pw = $('.p-final-price-wrapper', info), av = $('.availability-value', info);
-      var rows = specRows(d.v);
-      /* spodní řádek přes celou šířku: typ příze + zkušební vzorek */
-      var smp = null; rows = rows.filter(function (r) { if (r[0] === 'Zkušební vzorek') { smp = r; return false; } return true; });
-      if (d.v.g || smp) rows.push([d.v.g && smp ? 'Typ příze · zkušební vzorek' : (d.v.g ? 'Typ příze' : 'Zkušební vzorek'), [d.v.g, smp && smp[1]].filter(Boolean).join(' · ')]);
-      /* pořadí: krátký popis → parametry → varianty → sklad → cena + ks + košík v řadě → doprava zdarma → oblíbené/porovnání → medailonek */
-      var anchor = l || stw || h1c;
-      if (rows.length) { var sp = box(specsHtml(rows, 'specs specs--pd')); after(anchor, sp); anchor = sp; }
-      var swSlot = box('<div class="pd__swh" hidden></div>'); after(anchor, swSlot); anchor = swSlot; info.__whSw = swSlot;
-      if (av) { after(anchor, av); anchor = av; }
-      if (pw) {
-        var buy = D.createElement('div'); buy.className = 'w-buy' + (atc ? '' : ' w-buy--na'); after(anchor, buy); buy.appendChild(pw); if (atc) buy.appendChild(atc); anchor = buy;
-        var soldTxt = $('.availability-value, .availability-label', buy); if (!atc) { var so = $('.sold-out, .p-cat-sold-out', info); if (so && !buy.contains(so)) buy.appendChild(so); }
+      /* pořadí: krátký popis (jak je v administraci) → tabulka parametrů na místě řádků s parametry → zbytek popisku → varianty → sklad → cena + košík → doprava → Napište nám */
+      var anchor = stw || h1c;
+      var put = function (n) { after(anchor, n); anchor = n; };
+      if (ownTable) { sdEl.classList.add('w-sd-own'); put(sdEl); }
+      else if (sdEl) {
+        var preL = tabHtml ? pl.pre : sdLines, postL = tabHtml ? pl.post : [];
+        if (preL.length) put(box('<div class="pd__desc">' + linesHtml(preL) + '</div>'));
+        if (tabHtml) {
+          var tb = box(tabHtml); put(tb); var dl = tb.querySelector('.w-ptab');
+          fitTab(dl); setTimeout(function () { fitTab(dl); }, 400);
+          if (D.fonts && D.fonts.ready) D.fonts.ready.then(function () { fitTab(dl); });
+          var rt = null; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { fitTab(dl); }, 150); });
+        }
+        if (postL.length) put(box('<div class="pd__desc pd__desc--after">' + linesHtml(postL) + '</div>'));
+        sdEl.classList.add('w-sd-hidden');
       }
-      var usp = box('<ul class="pd__usp">' + CONFIG.usps.map(function (u) { return '<li>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</li>'; }).join('') + '</ul>');
-      after(anchor, usp); anchor = usp;
-      var soc = $('.social-buttons-wrapper', info); if (soc) { soc.classList.add('w-soc'); after(anchor, soc); anchor = soc; }
-      var m = CONFIG.medailon;
-      if (m) { after(anchor, box('<p class="pd__help">Nevíte si rady s výběrem? <a href="mailto:' + esc(m.email) + '">Napište nám</a></p>')); }
-      if (false) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="" loading="lazy">' : '') + '<div><b>' + esc(m.title) + '</b><p>' + esc(m.text) + '</p><p class="pd__med-c"><a href="mailto:' + esc(m.email) + '">' + svg('ico--sm', P.mail) + ' ' + esc(m.email) + '</a><a href="tel:' + esc(m.tel.replace(/\s/g, '')) + '">' + svg('ico--sm', P.phone) + ' ' + esc(m.tel) + '</a></p></div></aside>'); after(anchor, mb); }
-      if (sdEl && rows.length) sdEl.classList.add('w-sd-hidden');
+      var swSlot = box('<div class="pd__swh" hidden></div>'); put(swSlot); info.__whSw = swSlot;
+      if (av) put(av);
+      if (pw) {
+        var buy = D.createElement('div'); buy.className = 'w-buy' + (atc ? '' : ' w-buy--na'); put(buy); buy.appendChild(pw); if (atc) buy.appendChild(atc);
+        if (!atc) { var so = $('.sold-out, .p-cat-sold-out', info); if (so) { if (av && txt(av)) so.style.display = 'none'; else if (!buy.contains(so)) buy.appendChild(so); } }
+      }
+      put(box('<ul class="pd__usp">' + CONFIG.usps.map(function (u) { return '<li>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</li>'; }).join('') + '</ul>'));
+      var soc = $('.social-buttons-wrapper', info); if (soc) { soc.classList.add('w-soc'); put(soc); }
     }
     $$('.add-to-cart-button', det).forEach(function (btn) {
       var v = !!btn.closest('.variant-table');
