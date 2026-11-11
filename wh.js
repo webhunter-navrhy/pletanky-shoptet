@@ -22,7 +22,8 @@
       { t: 'Pomůcky', h: '/pomucky/' },
       { t: 'Korálky', h: '/koralky-/' }
     ],
-    akceCount: 8,
+    akceCount: 12,
+    projsHref: '/vyberte-podle-projektu/',
     carouselMs: 6500,
     banner: {
       h1: 'Vše pro radost z tvoření',
@@ -45,11 +46,11 @@
       { t: 'Dárkové poukazy', s: 'Pro všechny, kdo rádi tvoří', h: '/darkove-poukazy/', img: 'klubko.jpg' }
     ],
     projs: [
-      { t: 'Svetry a kardigany', h: '/prize-s-obsahem-vlny/', img: 'proj-svetry.jpg', links: [['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/'], ['Značka DROPS', '/znacka/drops/']] },
-      { t: 'Čepice a šály', h: '/moherove/', img: 'proj-cepice.jpg', links: [['Moherové příze', '/moherove/'], ['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/']] },
-      { t: 'Ponožky', h: '/ponozkove-2/', img: 'proj-ponozky.jpg' },
-      { t: 'Deky a pledy', h: '/zinylkove-prize/', img: 'proj-deky.jpg', links: [['Žinylkové příze', '/zinylkove-prize/'], ['Háčkovací příze', '/hackovaci-prize/'], ['Všechny příze', '/prize/']] },
-      { t: 'Hračky a amigurumi', h: '/hackovaci-prize/', img: 'proj-amigurumi.jpg', links: [['Háčkovací příze', '/hackovaci-prize/'], ['Pomůcky pro výrobu', '/pomucky/']] },
+      { t: 'Svetry a kardigany', h: '/prize-s-obsahem-vlny/', img: 'proj-svetry.jpg', links: [['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/'], ['Značka DROPS', '/znacka/drops/'], ['Jehlice a háčky', '/hackovani-a-pleteni/']] },
+      { t: 'Čepice a šály', h: '/moherove/', img: 'proj-cepice.jpg', links: [['Moherové příze', '/moherove/'], ['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Všechny příze', '/prize/'], ['Jehlice a háčky', '/hackovani-a-pleteni/']] },
+      { t: 'Ponožky', h: '/ponozkove-2/', img: 'proj-ponozky.jpg', links: [['Ponožkové příze', '/ponozkove-2/'], ['Příze s obsahem vlny', '/prize-s-obsahem-vlny/'], ['Jehlice a háčky', '/hackovani-a-pleteni/'], ['Drobná galanterie', '/drobna-galanterie/']] },
+      { t: 'Deky a pledy', h: '/zinylkove-prize/', img: 'proj-deky.jpg', links: [['Žinylkové příze', '/zinylkove-prize/'], ['Háčkovací příze', '/hackovaci-prize/'], ['Všechny příze', '/prize/'], ['Jehlice a háčky', '/hackovani-a-pleteni/']] },
+      { t: 'Hračky a amigurumi', h: '/hackovaci-prize/', img: 'proj-amigurumi.jpg', links: [['Háčkovací příze', '/hackovaci-prize/'], ['Jehlice a háčky', '/hackovani-a-pleteni/'], ['Drobná galanterie', '/drobna-galanterie/'], ['Pomůcky pro výrobu', '/pomucky/']] },
       { t: 'Macramé do bytu', h: '/ceske-hobby-spagaty/', img: 'proj-macrame.jpg', links: [['Špagátové a šňůrkové příze', '/ceske-hobby-spagaty/'], ['Pomůcky pro výrobu', '/pomucky/'], ['Dřevěné korálky', '/drevene-3/']] },
       { t: 'Šperky a bižuterie', h: '/koralky-/', img: 'proj-sperky.jpg', links: [['Korálky', '/koralky-/'], ['Kameny a minerály', '/kameny-polodrahokamy-mineraly-/'], ['Bižuterní komponenty', '/bizuterni-komponenty/'], ['Hotové šperky', '/hotove-sperky/'], ['Návlekový materiál', '/navlekovy-material/']] }
     ],
@@ -271,6 +272,26 @@
       if (io) { prod.__whLoad = load; io.observe(prod); }
       on(prod, 'mouseenter', function () { if (prod.__whLoad) { io && io.unobserve(prod); var f = prod.__whLoad; prod.__whLoad = null; queue.unshift(f); pump(); } });
     }
+  }
+  /* posuvný jednořádkový pás se šipkami u okrajů stránky */
+  function rail(track, cfg) {
+    cfg = cfg || {};
+    var wr = D.createElement('div'); wr.className = 'w-rail' + (cfg.c ? ' ' + cfg.c : '');
+    track.classList.add('w-rail__track');
+    var pv = D.createElement('button'), nx = D.createElement('button');
+    pv.type = nx.type = 'button'; pv.className = 'w-rail__b w-rail__prev'; nx.className = 'w-rail__b w-rail__next';
+    pv.setAttribute('aria-label', 'Předchozí'); nx.setAttribute('aria-label', 'Další');
+    pv.innerHTML = nx.innerHTML = W(svg('ico--sm', P.right));
+    wr.appendChild(pv); wr.appendChild(track); wr.appendChild(nx);
+    var upd = function () {
+      var m = track.scrollWidth - track.clientWidth - 2;
+      cls(wr, 'w-rail--no', m <= 0); pv.disabled = track.scrollLeft <= 2; nx.disabled = track.scrollLeft >= m;
+    };
+    var go = function (d) { track.scrollBy({ left: d * Math.max(200, track.clientWidth * 0.85), behavior: 'smooth' }); };
+    on(pv, 'click', function () { go(-1); }); on(nx, 'click', function () { go(1); });
+    on(track, 'scroll', upd); window.addEventListener('resize', upd);
+    setTimeout(upd, 60); setTimeout(upd, 800); setTimeout(upd, 2500);
+    return wr;
   }
   function cards(root) { $$('.product', root || D).forEach(card); }
   function gridFrom(url, n, key) {
@@ -513,8 +534,9 @@
   function initProjs(w) {
     var sh = null;
     var close = function () { if (sh) { cls(sh, 'w-is-open', false); sh.setAttribute('aria-hidden', 'true'); } };
-    $$('.w-proj[data-links]', w).forEach(function (a) {
-      on(a, 'click', function (e) {
+    {
+      on(w, 'click', function (e) {
+        var a = e.target.closest ? e.target.closest('.w-proj[data-links]') : null; if (!a) return;
         e.preventDefault();
         var ls = []; try { ls = JSON.parse(a.getAttribute('data-links')); } catch (x) {}
         if (!sh) {
@@ -528,7 +550,7 @@
         cls(sh, 'w-is-open', true); sh.setAttribute('aria-hidden', 'false');
         var f = sh.querySelector('a'); if (f) f.focus();
       });
-    });
+    }
   }
   /* odstín a téma měsíce: čte se ze Shoptetu, při chybě zůstane výchozí z CONFIG */
   function initMonth(w) {
@@ -549,6 +571,26 @@
       if (im) el.querySelector('img').src = im;
     }).catch(function () {});
   }
+  /* rubriky „Vyberte podle projektu“: výchozí z CONFIG, jinak ze Shoptetu (články ve složce CONFIG.projsHref:
+     název = nadpis článku, fotka = obrázek článku, odkazy v perexu = okno odkazů; jeden odkaz = rovnou přechod) */
+  function projsHtml(list) {
+    return list.map(function (p) {
+      var im = /^https?:|^\//.test(p.img) ? p.img : IMG + p.img;
+      return '<a class="proj" href="' + esc(p.h) + '"' + (p.links && p.links.length > 1 ? ' data-links="' + esc(JSON.stringify(p.links)) + '" data-title="' + esc(p.t) + '"' : '') + '><span class="proj__img"><img src="' + esc(im) + '" alt="" loading="lazy"></span><span class="proj__n">' + esc(p.t) + '</span></a>';
+    }).join('');
+  }
+  function projsFromShop(w) {
+    getDoc(CONFIG.projsHref).then(function (d) {
+      var it = $$('.news-item', d).map(function (n) {
+        var a = n.querySelector('a.title') || n.querySelector('a'), de = n.querySelector('.description'), im = imgOf(n.querySelector('img'));
+        var ls = de ? $$('a', de).map(function (x) { return [txt(x), x.getAttribute('href')]; }).filter(function (x) { return x[0] && x[1]; }) : [];
+        if (!a || !im) return null;
+        return { t: txt(a), h: ls.length ? ls[0][1] : a.getAttribute('href'), img: im, links: ls };
+      }).filter(Boolean);
+      if (it.length < 3) return;
+      var tr = w.querySelector('.w-projs'); if (tr) tr.innerHTML = W(projsHtml(it));
+    }).catch(function () {});
+  }
   function buildHome() {
     var cw = $('#content-wrapper'); if (!cw) return;
     var b = CONFIG.banner;
@@ -566,25 +608,24 @@
         return '<a class="tile' + (t.c ? ' ' + t.c : '') + '" href="' + t.h + '"><img src="' + IMG + t.img + '" alt="" loading="lazy"><span class="tile__box"><b>' + t.t + '</b><span class="tile__more"><span>' + t.s + '</span></span></span></a>';
       }).join('') + '</div>') +
       sec('Akce', '<div class="whx-slot" data-slot="akce"></div>', ['Celá akce', '/akcni-zbozi/']) +
-      sec('Vyberte podle projektu', '<div class="projs">' + CONFIG.projs.map(function (p) {
-        return '<a class="proj" href="' + esc(p.h) + '"' + (p.links ? ' data-links="' + esc(JSON.stringify(p.links)) + '" data-title="' + esc(p.t) + '"' : '') + '><span class="proj__img"><img src="' + IMG + p.img + '" alt="" loading="lazy"></span><span class="proj__n">' + p.t + '</span></a>';
-      }).join('') + '</div>') +
       '<section class="sec"><div class="wrap"><a class="themeband" href="' + CONFIG.theme.h + '"><img src="' + CONFIG.theme.img + '" alt="' + esc(CONFIG.theme.alt) + '" loading="lazy"><span class="themeband__in"><small>' + CONFIG.theme.small + '</small><b>' + CONFIG.theme.b + '</b><span class="btn btn--cart">' + CONFIG.theme.btn + '</span></span></a></div></section>' +
       sec('Novinky', '<div class="whx-slot" data-slot="nov"></div>', ['Všechny novinky', '/novinky-2/']) +
-      '<div class="whx-slot" data-slot="blog"></div><div class="whx-slot" data-slot="rvs"></div><div class="whx-slot" data-slot="ig"></div>' +
+      sec('Vyberte podle projektu', '<div class="projs">' + projsHtml(CONFIG.projs) + '</div>') +
+      '<div class="whx-slot" data-slot="rvs"></div><div class="whx-slot" data-slot="blog"></div><div class="whx-slot" data-slot="ig"></div>' +
       '<section class="news"><div class="wrap news__in"><h2 class="h2">Newsletter</h2><p>' + esc(CONFIG.newsText) + '</p><div class="news__slot"></div></div></section>';
     var w = box(html, 'main'); w.id = 'whHome';
     after(cw, w);
     var slot = function (n) { return w.querySelector('[data-slot="' + n + '"]'); };
-    initCarousel(w); initProjs(w); initMonth(w);
+    var pr = w.querySelector('.w-projs'); if (pr) { var ph = D.createElement('span'); pr.replaceWith(ph); ph.replaceWith(rail(pr, { c: 'w-rail--projs' })); }
+    initCarousel(w); initProjs(w); initMonth(w); projsFromShop(w);
     /* newsletter – nativní formulář i s captchou */
     var nf = $('#formNewsletterWidget');
     if (nf) { tuneNews(nf); nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news').remove();
     /* akce + novinky */
     var fallback = $$('#content .product').slice(0, 4).map(function (x) { return x.outerHTML; }).join('');
     [['akce', '/akcni-zbozi/'], ['nov', '/novinky-2/']].forEach(function (s) {
-      (s[0] === 'akce' ? akceGrid(CONFIG.akceCount) : gridFrom(s[1], 4)).then(function (g) { slot(s[0]).replaceWith(g); }).catch(function () {
-        var g = D.createElement('div'); g.className = 'w-pgrid products'; g.innerHTML = fallback; cards(g); slot(s[0]).replaceWith(g);
+      (s[0] === 'akce' ? akceGrid(CONFIG.akceCount) : gridFrom(s[1], 10)).then(function (g) { slot(s[0]).replaceWith(rail(g, { c: 'w-rail--prod' })); }).catch(function () {
+        var g = D.createElement('div'); g.className = 'w-pgrid products'; g.innerHTML = fallback; cards(g); slot(s[0]).replaceWith(rail(g, { c: 'w-rail--prod' }));
       });
     });
     /* články */
@@ -604,10 +645,10 @@
         var bar = r.querySelector('.rate-bar'), wv = bar ? (bar.getAttribute('style') || '').match(/--rate-bar-width:\s*([\d.,]+%?)/) : null;
         return '<li><span>' + r.getAttribute('data-score') + '</span>' + svg('ico--star', P.star) + '<i><b style="width:' + (wv ? wv[1] : '0') + '"></b></i><em>' + esc(txt(r.querySelector('.rate-count'))) + '</em></li>';
       }).join('');
-      var vs = $$('.vote-wrap', doc).filter(function (v) { return txt(v.querySelector('.vote-content')).length > 20; }).slice(0, 6).map(function (v) {
+      var vs = $$('.vote-wrap', doc).filter(function (v) { return txt(v.querySelector('.vote-content')).length > 20; }).map(function (v) {
         var st = v.querySelectorAll('.star-on').length || 5;
         return '<figure class="rv">' + stars(st) + '<blockquote>' + esc(txt(v.querySelector('.vote-content'))) + '</blockquote><figcaption><b>' + esc(txt(v.querySelector('.vote-name span') || v.querySelector('.vote-name'))) + '</b><span>' + esc(txt(v.querySelector('.vote-time'))) + '</span></figcaption></figure>';
-      }).join('');
+      });
       /* komentáře k produktům: poslední hodnocení a diskuze z úvodní stránky Shoptetu */
       var pcm = $$('.latest-contribution-inner').map(function (a) {
         var im = a.querySelector('.latest-contribution-image img'), src = im ? (im.getAttribute('data-src') || im.getAttribute('src') || '') : '';
@@ -615,25 +656,36 @@
         if (de) { var cl = de.cloneNode(true); $$('div,br', cl).forEach(function (x) { x.append(' '); }); dt = txt(cl).replace(/\s+/g, ' ').trim(); }
         var au = txt(a.querySelector('.latest-contribution-author')), da = txt(a.querySelector('.latest-contribution-date'));
         return { h: a.getAttribute('href'), n: txt(a.querySelector('.latest-contribution-product')), i: /^data:/.test(src) ? '' : src, st: a.querySelectorAll('.star-on').length || 5, d: dt, a: au, t: da };
-      }).filter(function (x) { return x.n; }).sort(function (a, b) { return (b.d ? 1 : 0) - (a.d ? 1 : 0); }).slice(0, 6).map(function (x) {
+      }).filter(function (x) { return x.n; }).sort(function (a, b) { return (b.d ? 1 : 0) - (a.d ? 1 : 0); }).map(function (x) {
         return '<figure class="rv rv--prod"><a class="rv__p" href="' + esc(x.h) + '">' + (x.i ? '<img src="' + esc(x.i) + '" alt="" loading="lazy">' : '') + '<span>' + esc(x.n) + '</span></a>' + stars(x.st) + (x.d ? '<blockquote>' + esc(x.d) + '</blockquote>' : '') + '<figcaption><b>' + esc(x.a) + '</b><span>' + esc(x.t) + '</span></figcaption></figure>';
-      }).join('');
-      if (!vs) { slot('rvs').remove(); return; }
-      slot('rvs').replaceWith(box(sec('Recenze zákazníků', '<div class="rvs"><div class="rvs__sum"><p class="rvs__score">' + esc(avg || '5,0') + '</p>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
-        '<p class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</p><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line btn--full" href="/hodnoceni-obchodu/">Všechna hodnocení</a></div>' +
-        '<div class="rvs__main" data-tabs>' + (pcm ? '<div class="rvs__tabs" role="tablist"><button class="is-on" type="button" data-tab="0">Hodnocení obchodu</button><button type="button" data-tab="1">Komentáře k produktům</button></div>' : '') +
-        '<div class="tabs__panel is-on"><div class="rvs__grid">' + vs + '</div></div>' + (pcm ? '<div class="tabs__panel"><div class="rvs__grid rvs__grid--3">' + pcm + '</div></div>' : '') + '</div></div>')));
-      $$('.w-rvs__tabs [data-tab]').forEach(function (b) { b.addEventListener('click', function () {
+      });
+      if (!vs.length) { slot('rvs').remove(); return; }
+      var RV = 10, part = function (l, cls2) {
+        return '<div class="rvs__grid rvs__grid--rail ' + (cls2 || '') + '">' + l.slice(0, RV).join('') + '</div>' +
+          (l.length > RV ? '<div class="rvs__rest">' + l.slice(RV).join('') + '</div>' : '');
+      };
+      var node = box(sec('Recenze zákazníků', '<div class="rvs"><button type="button" class="rvs__sum" aria-expanded="false"><span class="rvs__score">' + esc(avg || '5,0') + '</span>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
+        '<span class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</span><span class="rvs__tog"><span class="rvs__t1">Zobrazit všechna</span><span class="rvs__t2">Skrýt</span></span></button>' +
+        '<div class="rvs__all"><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line" href="/hodnoceni-obchodu/">Všechna hodnocení na jedné stránce</a></div>' +
+        '<div class="rvs__main" data-tabs>' + (pcm.length ? '<div class="rvs__tabs" role="tablist"><button class="is-on" type="button" data-tab="0">Hodnocení obchodu</button><button type="button" data-tab="1">Komentáře k produktům</button></div>' : '') +
+        '<div class="tabs__panel is-on">' + part(vs) + '</div>' + (pcm.length ? '<div class="tabs__panel">' + part(pcm, 'rvs__grid--3') + '</div>' : '') + '</div></div>'));
+      $$('.w-rvs__grid--rail', node).forEach(function (g) { var ph = D.createElement('span'); g.replaceWith(ph); ph.replaceWith(rail(g, { c: 'w-rail--rv' })); });
+      slot('rvs').replaceWith(node);
+      var sm = node.querySelector('.w-rvs__sum');
+      on(sm, 'click', function () { var o = !node.querySelector('.w-rvs').classList.contains('w-is-all'); cls(node.querySelector('.w-rvs'), 'w-is-all', o); sm.setAttribute('aria-expanded', o ? 'true' : 'false'); setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 50); });
+      $$('.w-rvs__tabs [data-tab]', node).forEach(function (b) { b.addEventListener('click', function () {
         var m = b.closest('.w-rvs__main'), i = +b.getAttribute('data-tab');
         $$('[data-tab]', m).forEach(function (x) { x.classList.toggle('w-is-on', x === b); });
         $$('.w-tabs__panel', m).forEach(function (p, k) { p.classList.toggle('w-is-on', k === i); });
+        setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30);
       }); });
     }).catch(function () { slot('rvs').remove(); });
     /* instagram */
     var ig = $$('.instagram-widget a').map(function (a) { var i = a.querySelector('img'); return { h: a.getAttribute('href'), i: i ? (i.getAttribute('data-thumbnail-medium') || imgOf(i)) : '' }; }).filter(function (x) { return x.i; });
     if (ig.length) {
       var it = ig.map(function (x) { return '<a class="film__i" href="' + esc(x.h) + '" target="_blank" rel="noopener"><img src="' + esc(x.i) + '" alt="Příspěvek @pletanky" loading="lazy"></a>'; }).join('');
-      slot('ig').replaceWith(box('<section class="sec sec--film"><div class="wrap"><div class="sh"><h2 class="h2">Instagram <a href="' + CONFIG.instagram + '" target="_blank" rel="noopener">@pletanky</a></h2></div></div><div class="film"><div class="film__track">' + it + it + '</div></div></section>'));
+      slot('ig').replaceWith(box('<section class="sec sec--film"><div class="wrap"><div class="sh"><h2 class="h2">Instagram <a href="' + CONFIG.instagram + '" target="_blank" rel="noopener">@pletanky</a></h2></div></div><div class="film"><div class="film__track">' + it + '</div></div></section>'));
+      var ft = $('.w-film__track'); if (ft) { var fp = D.createElement('span'); ft.replaceWith(fp); fp.replaceWith(rail(ft, { c: 'w-rail--ig' })); }
     } else slot('ig').remove();
   }
 
@@ -752,8 +804,9 @@
       if (rows.length) { var sp = box(specsHtml(rows, 'specs specs--pd')); after(anchor, sp); anchor = sp; }
       var swSlot = box('<div class="pd__swh" hidden></div>'); after(anchor, swSlot); anchor = swSlot; info.__whSw = swSlot;
       if (av) { after(anchor, av); anchor = av; }
-      if (pw && atc) {
-        var buy = D.createElement('div'); buy.className = 'w-buy'; after(anchor, buy); buy.appendChild(pw); buy.appendChild(atc); anchor = buy;
+      if (pw) {
+        var buy = D.createElement('div'); buy.className = 'w-buy' + (atc ? '' : ' w-buy--na'); after(anchor, buy); buy.appendChild(pw); if (atc) buy.appendChild(atc); anchor = buy;
+        var soldTxt = $('.availability-value, .availability-label', buy); if (!atc) { var so = $('.sold-out, .p-cat-sold-out', info); if (so && !buy.contains(so)) buy.appendChild(so); }
       }
       var usp = box('<ul class="pd__usp">' + CONFIG.usps.map(function (u) { return '<li>' + svg('ico--sm', P[u[0]]) + ' ' + u[1] + '</li>'; }).join('') + '</ul>');
       after(anchor, usp); anchor = usp;
@@ -809,8 +862,8 @@
     /* další odstíny z kategorie */
     var cat = cr.items.length > 1 ? cr.items[cr.items.length - 2] : null;
     if (cat && cat.h && cat.h !== '/' && info) run('swatches', function () { swatches(cat.h, info, h1); });
-    if (cat && cat.h && cat.h !== '/') {
-      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">' + (/^příze/i.test(txt(h1)) ? 'Další odstíny' : 'Další z kategorie') + '</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
+    if (cat && cat.h && cat.h !== '/' && !/^příze/i.test(txt(h1))) {
+      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">' + 'Další z kategorie' + '</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
       var anchor = tabs || rel || det;
       after(anchor, holder);
       var me = location.pathname;
