@@ -647,3 +647,38 @@ html.wh .whx .w-rail--ig .w-rail__next{right:16px}
 /* ===== 7. kolo (bod 8 z 11. 11.): celkově o kousek větší a výraznější písmo ===== */
 html.wh{--muted:#5f5456}
 html.wh body{font-size:16px}
+
+/* ===== 8. kolo (12. 11. 2026): detail produktu, recenze níž ===== */
+/* řada cena + ks + Do košíku vždy v jedné řadě na počítači */
+@media(min-width:768px){
+html.wh .p-info-wrapper .w-buy{flex-wrap:nowrap;gap:14px 18px}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper{flex:0 1 auto;min-width:0;max-width:44%}
+html.wh .p-info-wrapper .w-buy .price-final,html.wh .p-info-wrapper .w-buy .price-final-holder{font-size:26px!important;white-space:nowrap}
+html.wh .p-info-wrapper .w-buy .price-standard,html.wh .p-info-wrapper .w-buy .price-save,html.wh .p-info-wrapper .w-buy .price-additional,html.wh .p-info-wrapper .w-buy .price-measure{white-space:nowrap}
+html.wh .p-info-wrapper .w-buy .add-to-cart{flex:1 1 0;min-width:0;gap:10px;flex-wrap:nowrap}
+html.wh .p-info-wrapper .w-buy .add-to-cart-button{min-width:0;white-space:nowrap;padding-left:14px;padding-right:14px}
+}
+/* fotka: rámeček přesně kolem fotky, lupa a šipky */
+html.wh .p-image{position:relative;overflow:hidden}
+html.wh .p-image #wrap,html.wh .p-image a.p-main-image{display:block}
+html.wh .p-image img{max-height:640px}
+html.wh .w-gal__zoom{position:absolute;right:14px;bottom:14px;z-index:60;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(43,34,38,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+html.wh .w-gal__zoom:hover{background:var(--accent-h)}
+html.wh .w-gal__zoom svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+html.wh .w-gal__nav{position:absolute;top:50%;z-index:60;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:1px solid var(--line-2);background:rgba(255,255,255,.92);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-size:0}
+html.wh .w-gal__nav:hover{background:#fff;border-color:var(--ink)}
+html.wh .w-gal__nav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html.wh .w-gal__nav--prev{left:12px}
+html.wh .w-gal__nav--next{right:12px}
+/* akční kolečko: zlaté, menší */
+html.wh .p-image .flags-extra{top:12px!important;left:12px!important;right:auto!important}
+html.wh .p-image .flag.flag-discount{width:56px!important;height:56px!important;min-width:0!important;padding:0!important;border-radius:50%!important;background:var(--accent)!important;color:#fff!important;border:0!important;box-shadow:none!important;display:flex!important;align-items:center;justify-content:center;text-align:center;transform:none!important}
+html.wh .p-image .flag.flag-discount .price-standard{display:none!important}
+html.wh .p-image .flag.flag-discount .price-save{display:block!important;color:#fff!important;font-size:15px!important;font-weight:500;line-height:1;margin:0!important;padding:0!important;background:none!important}
+/* recenze: o něco nižší sekce */
+html.wh .whx .w-rvs{gap:28px}
+html.wh .whx .w-rvs__sum{padding:14px 16px}
+html.wh .whx .w-rvs__score{font-size:40px;margin:0 0 4px}
+html.wh .whx .w-rvs__cnt{margin:4px 0 8px}
+html.wh .whx .w-rvs__dist{margin:0 0 8px}
+html.wh .whx .w-rvs__grid--rail>.w-rv{padding:14px 16px 12px;gap:8px}

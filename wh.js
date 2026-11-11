@@ -946,6 +946,48 @@
     });
     if ($('.variant-table', det)) det.classList.add('w-has-vars');
     var hdTop = $('.p-detail-inner-header'); if (hdTop && !hdTop.querySelector('h1')) hdTop.classList.add('w-empty');
+    /* galerie: původní (neoříznutá) fotka, výrazná lupa, šipky mezi fotkami */
+    run('gallery', function () {
+      var box0 = $('.p-image'); if (!box0) return;
+      var MG = 'M9 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM21 21l-6-6M9 6v6M6 9h6';
+      var zb = D.createElement('button'); zb.type = 'button'; zb.className = 'w-gal__zoom'; zb.setAttribute('aria-label', 'Zvětšit fotku');
+      zb.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + MG + '"></path></svg>';
+      zb.addEventListener('click', function (e) { e.preventDefault(); var a = $('.p-main-image', box0); if (a) a.click(); });
+      box0.appendChild(zb);
+      var thumbs = $$('.p-thumbnails-inner a.p-thumbnail');
+      if (thumbs.length > 1) {
+        var mk = function (dir) {
+          var b = D.createElement('button'); b.type = 'button'; b.className = 'w-gal__nav w-gal__nav--' + (dir < 0 ? 'prev' : 'next');
+          b.setAttribute('aria-label', dir < 0 ? 'Předchozí fotka' : 'Další fotka');
+          b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + (dir < 0 ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7') + '"></path></svg>';
+          b.addEventListener('click', function (e) {
+            e.preventDefault();
+            var cur = 0; thumbs.forEach(function (t, i) { if (t.classList.contains('highlighted')) cur = i; });
+            thumbs[(cur + dir + thumbs.length) % thumbs.length].click();
+          });
+          box0.appendChild(b);
+        };
+        mk(-1); mk(1);
+      }
+      /* Shoptet dává do rámečku fotku s bílými okraji (4:3); použijeme původní soubor, ať rámeček sedí kolem fotky */
+      var busy = false;
+      function sharp() {
+        var a = $('.p-main-image', box0), im = a && a.querySelector('img'); if (!im || busy) return;
+        var o = a.getAttribute('data-href'); if (!o || im.getAttribute('data-wh-orig') === o) return;
+        busy = true;
+        var t = new Image();
+        t.onload = function () {
+          busy = false;
+          if (t.naturalWidth < 300) return;
+          im.setAttribute('data-wh-orig', o); im.removeAttribute('srcset'); im.removeAttribute('width'); im.removeAttribute('height'); im.src = o;
+          im.style.aspectRatio = t.naturalWidth + ' / ' + t.naturalHeight;
+        };
+        t.onerror = function () { busy = false; im.setAttribute('data-wh-orig', o); };
+        t.src = o;
+      }
+      sharp();
+      if (window.MutationObserver) new MutationObserver(function () { sharp(); }).observe(box0, { subtree: true, attributes: true, attributeFilter: ['src', 'data-href'] });
+    });
     /* související produkty */
     var rel = $('.products-related');
     var relH = $('.products-related-header');
@@ -987,8 +1029,9 @@
     /* další odstíny z kategorie */
     var cat = cr.items.length > 1 ? cr.items[cr.items.length - 2] : null;
     if (cat && cat.h && cat.h !== '/' && info) run('swatches', function () { swatches(cat.h, info, h1); });
-    if (cat && cat.h && cat.h !== '/' && !/^příze/i.test(txt(h1))) {
-      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">' + 'Další z kategorie' + '</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
+    if (cat && cat.h && cat.h !== '/') {
+      var isYarn = /^příze/i.test(txt(h1)) || cr.items.some(function (c) { return /^příze/i.test(c.t || c.n || ''); }) || (info && !!info.__whSw && /Odstín/.test(txt(info.__whSw)));
+      var holder = box('<section class="sec sec--tight pdmore"><div class="sh"><h2 class="h2">' + (isYarn ? 'Další odstíny' : 'Další z kategorie') + '</h2></div><div class="slot"></div><p class="sec__more"><a class="btn btn--line" href="' + esc(cat.h) + '">Celá kategorie</a></p></section>');
       var anchor = tabs || rel || det;
       after(anchor, holder);
       var me = location.pathname;
