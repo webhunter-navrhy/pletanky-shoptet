@@ -151,17 +151,43 @@
     if (k.indexOf('zkušební') === 0) return 'v';
     return 'x';
   }
+  function htmlLines(el) {
+    var lines = [], cur = { h: '', t: '' };
+    function flush() { if (cur.t.replace(/\s+/g, '').length) lines.push({ html: cur.h.replace(/^\s+|\s+$/g, ''), text: cur.t.replace(/\s+/g, ' ').trim() }); cur = { h: '', t: '' }; }
+    function walk(n) {
+      if (n.nodeType === 3) { var s = n.nodeValue.replace(/\s+/g, ' '); cur.h += esc(s); cur.t += s; return; }
+      if (n.nodeType !== 1) return;
+      var tg = n.tagName.toLowerCase();
+      if (tg === 'br') { flush(); return; }
+      if (tg === 'script' || tg === 'style') return;
+      var blk = /^(div|p|ul|ol|li|h[1-6]|table|tr|blockquote)$/.test(tg);
+      if (blk) flush();
+      if (tg === 'li') { cur.h += '• '; cur.t += '• '; }
+      var open = '', close = '';
+      if (tg === 'a' && n.getAttribute('href')) { open = '<a href="' + esc(n.getAttribute('href')) + '" target="_blank" rel="noopener">'; close = '</a>'; }
+      else if (/^(strong|b|em|i|u)$/.test(tg)) { open = '<' + tg + '>'; close = '</' + tg + '>'; }
+      cur.h += open; Array.prototype.forEach.call(n.childNodes, walk); cur.h += close;
+      if (blk) flush();
+    }
+    walk(el); flush(); return lines;
+  }
+  function rich(el) { return el ? htmlLines(el).map(function (x) { return x.html; }).join('<br>') : ''; }
   function parseDesc(t) {
     t = String(t || '').replace(/ /g, ' ');
     var trunc = /(\.\.\.|…)\s*$/.test(t);
     t = t.replace(/(\.\.\.|…)\s*$/, '');
     var m, hits = [], out = { lead: '', v: {}, trunc: trunc, extra: '' };
     KEYS.lastIndex = 0;
-    while ((m = KEYS.exec(t))) hits.push({ k: norm(m[1]), s: m.index, e: m.index + m[0].length });
+    while ((m = KEYS.exec(t))) {
+      var prevH = hits[hits.length - 1];
+      /* uvnitř řádku „Zkušební vzorek:“ nejsou další parametry (jehlice:, háček:) */
+      if (prevH && prevH.k === 'v' && t.slice(prevH.e, m.index).indexOf('\n') < 0) continue;
+      hits.push({ k: norm(m[1]), s: m.index, e: m.index + m[0].length });
+    }
     out.lead = (hits.length ? t.slice(0, hits[0].s) : t).replace(/\s+/g, ' ').trim().replace(/[.;:,]+$/, '');
     hits.forEach(function (h, i) {
       var v = t.slice(h.e, i + 1 < hits.length ? hits[i + 1].s : t.length);
-      var parts = v.split(/\n|;/); v = parts[0].replace(/\s+/g, ' ').trim().replace(/[.;,]+$/, '');
+      var parts = h.k === 'v' ? v.split(/\n/) : v.split(/\n|;/); v = parts[0].replace(/\s+/g, ' ').trim().replace(/[.;,]+$/, '');
       if (parts.length > 1 && !(trunc && i === hits.length - 1)) { var ex = parts.slice(1).join(' ').replace(/\s+/g, ' ').trim(); if (ex) out.extra += (out.extra ? ' ' : '') + ex; }
       if (h.k === 'x' || !v) return;
       if (trunc && i === hits.length - 1) return; /* poslední hodnota může být useknutá */
@@ -647,32 +673,28 @@
       }).join('');
       var vs = $$('.vote-wrap', doc).filter(function (v) { return txt(v.querySelector('.vote-content')).length > 20; }).map(function (v) {
         var st = v.querySelectorAll('.star-on').length || 5;
-        return '<figure class="rv">' + stars(st) + '<blockquote>' + esc(txt(v.querySelector('.vote-content'))) + '</blockquote><figcaption><b>' + esc(txt(v.querySelector('.vote-name span') || v.querySelector('.vote-name'))) + '</b><span>' + esc(txt(v.querySelector('.vote-time'))) + '</span></figcaption></figure>';
+        return '<figure class="rv">' + stars(st) + '<blockquote>' + rich(v.querySelector('.vote-content')) + '</blockquote><figcaption><b>' + esc(txt(v.querySelector('.vote-name span') || v.querySelector('.vote-name'))) + '</b><span>' + esc(txt(v.querySelector('.vote-time'))) + '</span></figcaption></figure>';
       });
       /* komentáře k produktům: poslední hodnocení a diskuze z úvodní stránky Shoptetu */
       var pcm = $$('.latest-contribution-inner').map(function (a) {
         var im = a.querySelector('.latest-contribution-image img'), src = im ? (im.getAttribute('data-src') || im.getAttribute('src') || '') : '';
         var de = a.querySelector('.latest-contribution-description'), dt = '';
-        if (de) { var cl = de.cloneNode(true); $$('div,br', cl).forEach(function (x) { x.append(' '); }); dt = txt(cl).replace(/\s+/g, ' ').trim(); }
+        if (de) { dt = rich(de); }
         var au = txt(a.querySelector('.latest-contribution-author')), da = txt(a.querySelector('.latest-contribution-date'));
         return { h: a.getAttribute('href'), n: txt(a.querySelector('.latest-contribution-product')), i: /^data:/.test(src) ? '' : src, st: a.querySelectorAll('.star-on').length || 5, d: dt, a: au, t: da };
       }).filter(function (x) { return x.n; }).sort(function (a, b) { return (b.d ? 1 : 0) - (a.d ? 1 : 0); }).map(function (x) {
-        return '<figure class="rv rv--prod"><a class="rv__p" href="' + esc(x.h) + '">' + (x.i ? '<img src="' + esc(x.i) + '" alt="" loading="lazy">' : '') + '<span>' + esc(x.n) + '</span></a>' + stars(x.st) + (x.d ? '<blockquote>' + esc(x.d) + '</blockquote>' : '') + '<figcaption><b>' + esc(x.a) + '</b><span>' + esc(x.t) + '</span></figcaption></figure>';
+        return '<figure class="rv rv--prod"><a class="rv__p" href="' + esc(x.h) + '">' + (x.i ? '<img src="' + esc(x.i) + '" alt="" loading="lazy">' : '') + '<span>' + esc(x.n) + '</span></a>' + stars(x.st) + (x.d ? '<blockquote>' + x.d + '</blockquote>' : '') + '<figcaption><b>' + esc(x.a) + '</b><span>' + esc(x.t) + '</span></figcaption></figure>';
       });
       if (!vs.length) { slot('rvs').remove(); return; }
       var RV = 10, part = function (l, cls2) {
-        return '<div class="rvs__grid rvs__grid--rail ' + (cls2 || '') + '">' + l.slice(0, RV).join('') + '</div>' +
-          (l.length > RV ? '<div class="rvs__rest">' + l.slice(RV).join('') + '</div>' : '');
+        return '<div class="rvs__grid rvs__grid--rail ' + (cls2 || '') + '">' + l.slice(0, 40).join('') + '</div>';
       };
-      var node = box(sec('Recenze zákazníků', '<div class="rvs"><button type="button" class="rvs__sum" aria-expanded="false"><span class="rvs__score">' + esc(avg || '5,0') + '</span>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
-        '<span class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</span><span class="rvs__tog"><span class="rvs__t1">Zobrazit všechna</span><span class="rvs__t2">Skrýt</span></span></button>' +
-        '<div class="rvs__all"><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line" href="/hodnoceni-obchodu/">Všechna hodnocení na jedné stránce</a></div>' +
+      var node = box(sec('Recenze zákazníků', '<div class="rvs"><div class="rvs__sum"><span class="rvs__score">' + esc(avg || '5,0') + '</span>' + stars(parseFloat((avg || '5').replace(',', '.')), 1) +
+        '<span class="rvs__cnt">' + esc(cnt) + ' hodnocení obchodu</span><ul class="rvs__dist">' + dist + '</ul><a class="btn btn--line" href="/hodnoceni-obchodu/">Všechna hodnocení</a></div>' +
         '<div class="rvs__main" data-tabs>' + (pcm.length ? '<div class="rvs__tabs" role="tablist"><button class="is-on" type="button" data-tab="0">Hodnocení obchodu</button><button type="button" data-tab="1">Komentáře k produktům</button></div>' : '') +
         '<div class="tabs__panel is-on">' + part(vs) + '</div>' + (pcm.length ? '<div class="tabs__panel">' + part(pcm, 'rvs__grid--3') + '</div>' : '') + '</div></div>'));
       $$('.w-rvs__grid--rail', node).forEach(function (g) { var ph = D.createElement('span'); g.replaceWith(ph); ph.replaceWith(rail(g, { c: 'w-rail--rv' })); });
       slot('rvs').replaceWith(node);
-      var sm = node.querySelector('.w-rvs__sum');
-      on(sm, 'click', function () { var o = !node.querySelector('.w-rvs').classList.contains('w-is-all'); cls(node.querySelector('.w-rvs'), 'w-is-all', o); sm.setAttribute('aria-expanded', o ? 'true' : 'false'); setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 50); });
       $$('.w-rvs__tabs [data-tab]', node).forEach(function (b) { b.addEventListener('click', function () {
         var m = b.closest('.w-rvs__main'), i = +b.getAttribute('data-tab');
         $$('[data-tab]', m).forEach(function (x) { x.classList.toggle('w-is-on', x === b); });
@@ -778,8 +800,12 @@
     var brand = brandA ? txt(brandA) : '';
     var sdEl = $('.p-short-description');
     var sd = '';
-    if (sdEl) { var cl = sdEl.cloneNode(true); $$('br', cl).forEach(function (b) { b.replaceWith('\n'); }); $$('p', cl).forEach(function (p) { p.append('\n'); }); sd = cl.textContent; }
+    var sdLines = sdEl ? htmlLines(sdEl) : [];
+    sd = sdLines.map(function (x) { return x.text; }).join('\n');
     var d = parseDesc(sd);
+    /* řádky mimo tabulku (spotřeba, volný text, odkazy) zůstávají jak je v administraci */
+    var KEYA = new RegExp('^\\s*' + KEYS.source, 'i');
+    var freeLines = sdLines.filter(function (x) { var km = KEYA.exec(x.text); return !(km && norm(km[1]) !== 'x'); });
     var fdEl = $('.shp-tabs-wrapper .basic-description') || $('#description');
     if (fdEl) {
       var fc = fdEl.cloneNode(true); $$('br', fc).forEach(function (b) { b.replaceWith('\n'); }); $$('p,div,li', fc).forEach(function (p) { p.append('\n'); });
@@ -791,8 +817,8 @@
       info.insertBefore(head, info.firstChild);
       var h1c = D.createElement('div'); h1c.className = 'whx'; info.insertBefore(h1c, head.nextSibling); h1c.appendChild(h1); h1.classList.add('w-h1', 'w-h1--pd');
       var stw = $('.p-detail-info .stars-wrapper'); if (stw) after(h1c, stw);
-      var leadAll = (d.lead + (d.lead && d.extra ? ' ' : '') + d.extra).trim();
-      if (leadAll) { var l = box('<p class="pd__lead">' + esc(leadAll) + '</p>'); after(stw || h1c, l); }
+      var l = null;
+      if (freeLines.length) { l = box('<div class="pd__lead pd__lead--free">' + freeLines.map(function (x) { return '<p>' + x.html + '</p>'; }).join('') + '</div>'); after(stw || h1c, l); }
       var atc = $('.add-to-cart', info);
       var pw = $('.p-final-price-wrapper', info), av = $('.availability-value', info);
       var rows = specRows(d.v);
@@ -812,7 +838,8 @@
       after(anchor, usp); anchor = usp;
       var soc = $('.social-buttons-wrapper', info); if (soc) { soc.classList.add('w-soc'); after(anchor, soc); anchor = soc; }
       var m = CONFIG.medailon;
-      if (m) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="" loading="lazy">' : '') + '<div><b>' + esc(m.title) + '</b><p>' + esc(m.text) + '</p><p class="pd__med-c"><a href="mailto:' + esc(m.email) + '">' + svg('ico--sm', P.mail) + ' ' + esc(m.email) + '</a><a href="tel:' + esc(m.tel.replace(/\s/g, '')) + '">' + svg('ico--sm', P.phone) + ' ' + esc(m.tel) + '</a></p></div></aside>'); after(anchor, mb); }
+      if (m) { after(anchor, box('<p class="pd__help">Nevíte si rady s výběrem? <a href="mailto:' + esc(m.email) + '">Napište nám</a></p>')); }
+      if (false) { var mb = box('<aside class="pd__med">' + (m.img ? '<img src="' + esc(m.img) + '" alt="" loading="lazy">' : '') + '<div><b>' + esc(m.title) + '</b><p>' + esc(m.text) + '</p><p class="pd__med-c"><a href="mailto:' + esc(m.email) + '">' + svg('ico--sm', P.mail) + ' ' + esc(m.email) + '</a><a href="tel:' + esc(m.tel.replace(/\s/g, '')) + '">' + svg('ico--sm', P.phone) + ' ' + esc(m.tel) + '</a></p></div></aside>'); after(anchor, mb); }
       if (sdEl && rows.length) sdEl.classList.add('w-sd-hidden');
     }
     $$('.add-to-cart-button', det).forEach(function (btn) {

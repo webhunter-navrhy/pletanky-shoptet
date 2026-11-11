@@ -1219,3 +1219,33 @@ html.wh .whx .w-news-simple input{flex:1 1 auto;min-width:0;height:50px;border:1
 html.wh .whx .w-news-simple button{height:50px;padding:0 22px;white-space:nowrap}
 @media(max-width:560px){html.wh .whx .w-news-simple{flex-direction:column}}
 @media(max-width:760px){html.wh .whx .w-car__b{top:100px;width:32px;height:32px}html.wh .whx .w-car__prev{left:6px}html.wh .whx .w-car__next{right:6px}}
+
+/* === opravy 11. 11. (2) === */
+html.wh .whx .w-pd__lead--free p{margin:0 0 6px;color:var(--muted)}
+html.wh .whx .w-pd__lead--free a{color:var(--accent);text-decoration:underline}
+html.wh .whx .w-pd__help{margin:14px 0 0;font-size:14px;color:var(--muted)}
+html.wh .whx .w-pd__help a{color:var(--accent);text-decoration:underline}
+html.wh .w-specs--pd .w-is-sample dt,html.wh .w-specs--pd .w-is-sample dd{font-weight:inherit}
+html.wh .whx .w-specs--pd dt{font-weight:700;white-space:nowrap}
+html.wh .whx .w-specs--pd dd{font-size:14px;font-weight:400;white-space:nowrap}
+html.wh .whx .w-specs--pd div.w-is-wide dd{white-space:normal}
+html.wh .whx .w-specs--pd div{min-width:0}
+/* hodnocení: souhrn vlevo, recenze vpravo */
+html.wh .whx .w-rvs{display:grid;grid-template-columns:280px minmax(0,1fr);gap:28px;align-items:stretch}
+html.wh .whx .w-rvs__sum{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:auto;padding:26px 22px;text-align:center;cursor:default}
+html.wh .whx .w-rvs__score{font-size:56px;font-weight:300;line-height:1}
+html.wh .whx .w-rvs__sum .w-stars--lg .w-ico--star{width:20px;height:20px}
+html.wh .whx .w-rvs__cnt{flex:none;color:var(--muted);font-size:14px;margin:0 0 6px}
+html.wh .whx .w-rvs__sum .w-rvs__dist{width:100%;margin:0 0 10px}
+html.wh .whx .w-rvs__main{min-width:0}
+html.wh .whx .w-rail--rv .w-rail__prev{left:-14px}
+html.wh .whx .w-rail--rv .w-rail__next{right:-14px}
+html.wh .whx .w-rvs__grid--rail>.w-rv{flex:0 0 320px}
+html.wh .whx .w-rv blockquote a{color:var(--accent);text-decoration:underline}
+@media(max-width:860px){html.wh .whx .w-rvs{grid-template-columns:1fr}}
+/* instagram: jeden souvislý pás */
+html.wh .whx .w-rail--ig .w-rail__track{gap:0}
+html.wh .whx .w-rail--ig .w-film__track{gap:0;display:flex;width:auto}
+html.wh .whx .w-rail--ig .w-film__i{width:260px;flex:0 0 260px}
+html.wh .whx .w-rail--ig .w-rail__prev{left:12px}
+html.wh .whx .w-rail--ig .w-rail__next{right:12px}
