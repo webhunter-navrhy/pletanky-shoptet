@@ -1214,3 +1214,7 @@ html.wh .p-info-wrapper .w-buy--na .add-to-cart,html.wh .p-info-wrapper .w-buy--
 
 /* ===== bod 10: sjednocení Další z kategorie / Související ===== */
 html.wh .whx .w-pdmore .w-pgrid,html.wh .products-related.products{gap:40px 28px}
+html.wh .whx .w-news-simple{display:flex;gap:10px;max-width:560px;margin:22px auto 0;padding:0 16px}
+html.wh .whx .w-news-simple input{flex:1 1 auto;min-width:0;height:50px;border:1px solid var(--line-2);background:#fff;padding:0 16px;font-size:15px;border-radius:0}
+html.wh .whx .w-news-simple button{height:50px;padding:0 22px;white-space:nowrap}
+@media(max-width:560px){html.wh .whx .w-news-simple{flex-direction:column}}

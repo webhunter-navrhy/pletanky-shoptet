@@ -620,7 +620,7 @@
     initCarousel(w); initProjs(w); initMonth(w); projsFromShop(w);
     /* newsletter – nativní formulář i s captchou */
     var nf = $('#formNewsletterWidget');
-    if (nf) { tuneNews(nf); nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news').remove();
+    if (nf) { tuneNews(nf); nf.classList.add('w-news__native'); w.querySelector('.w-news__slot').replaceWith(nf); } else w.querySelector('.w-news__slot').replaceWith(newsSimple());
     /* akce + novinky */
     var fallback = $$('#content .product').slice(0, 4).map(function (x) { return x.outerHTML; }).join('');
     [['akce', '/akcni-zbozi/'], ['nov', '/novinky-2/']].forEach(function (s) {
@@ -924,13 +924,20 @@
     before(f, w);
     /* newsletter na podstránkách: sidebar je skrytý, formulář přesuneme nad patičku */
     var nf = $('#formNewsletterWidget');
+    if (!nf) nf = newsSimple();
     if (nf && !isType('index') && !$('#whHome')) {
       var n = box('<section class="w-news"><div class="wrap w-news__in"><h2 class="w-h2">Newsletter</h2><p>' + esc(CONFIG.newsText) + '</p><div class="w-news__slot"></div></div></section>', 'div');
       n.id = 'whNews';
-      tuneNews(nf); nf.classList.add('w-news__native');
+      if (nf.id) { tuneNews(nf); nf.classList.add('w-news__native'); }
       n.querySelector('.w-news__slot').replaceWith(nf);
       before(w, n);
     }
+  }
+
+  /* mobilní šablona Shoptetu newsletter nevykreslí: vlastní jednoduchý formulář na stejnou adresu */
+  function newsSimple() {
+    var f = box('<form class="news-simple" action="/action/MailForm/subscribeToNewsletters/" method="post"><input type="hidden" name="formId" value="2"><input type="email" name="email" required autocomplete="email" placeholder="Váš e-mail" aria-label="E-mail"><button type="submit" class="btn btn--cart">Ano, chci novinky</button></form>', 'div');
+    return f;
   }
 
   /* ---------- spuštění ---------- */
