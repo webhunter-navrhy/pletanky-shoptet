@@ -662,8 +662,8 @@ html.wh .p-info-wrapper .w-buy .add-to-cart-button{min-width:0;white-space:nowra
 html.wh .p-image{position:relative;overflow:hidden}
 html.wh .p-image #wrap,html.wh .p-image a.p-main-image{display:block}
 html.wh .p-image img{max-height:640px}
-html.wh .w-gal__zoom{position:absolute;right:14px;bottom:14px;z-index:60;width:48px;height:48px;border-radius:50%;border:0;background:var(--star);color:#fff;box-shadow:0 4px 14px rgba(43,34,38,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-html.wh .w-gal__zoom:hover{background:var(--accent-h,#8c6629)}
+html.wh .w-gal__zoom{position:absolute;right:14px;bottom:14px;z-index:60;width:48px;height:48px;border-radius:50%;border:0;background:#b48a3e;color:#fff;box-shadow:0 4px 14px rgba(43,34,38,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+html.wh .w-gal__zoom:hover{background:#a67d38}
 html.wh .w-gal__zoom svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
 html.wh .w-gal__nav{position:absolute;top:50%;z-index:60;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:1px solid var(--line-2);background:rgba(255,255,255,.92);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-size:0}
 html.wh .w-gal__nav:hover{background:#fff;border-color:var(--ink)}
@@ -672,7 +672,7 @@ html.wh .w-gal__nav--prev{left:12px}
 html.wh .w-gal__nav--next{right:12px}
 /* akční kolečko: zlaté, menší */
 html.wh .p-image .flags-extra{top:12px!important;left:12px!important;right:auto!important}
-html.wh body .p-image .flags .flag.flag-discount{box-sizing:border-box!important;width:52px!important;height:52px!important;min-height:0!important;max-height:52px!important;aspect-ratio:1!important;min-width:0!important;padding:0!important;border-radius:50%!important;background:var(--star)!important;color:#fff!important;border:0!important;box-shadow:none!important;display:flex!important;align-items:center;justify-content:center;text-align:center;transform:none!important}
+html.wh body .p-image .flags .flag.flag-discount{box-sizing:border-box!important;width:52px!important;height:52px!important;min-height:0!important;max-height:52px!important;aspect-ratio:1!important;min-width:0!important;padding:0!important;border-radius:50%!important;background:#b48a3e!important;color:#fff!important;border:0!important;box-shadow:none!important;display:flex!important;align-items:center;justify-content:center;text-align:center;transform:none!important}
 html.wh .p-image .flag.flag-discount .price-standard{display:none!important}
 html.wh .p-image .flag.flag-discount .price-save{display:block!important;color:#fff!important;font-size:15px!important;font-weight:500;line-height:1;margin:0!important;padding:0!important;background:none!important}
 /* recenze: o něco nižší sekce */
