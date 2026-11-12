@@ -3,9 +3,9 @@
 html.wh{--r:8px;
   --bg:#fff; --alt:#faf6f0; --champ:#f2e9dc; --line:#e8dfd3; --line-2:#d9cdbd;
   --ink:#2b2226; --muted:#7a6e70; --soft:#a89c96;
-  --accent:#a67d38; --accent-h:#8c6629; --accent-ink:#fff;   
+  --accent:#c19a4a; --accent-h:#8c6629; --accent-ink:#fff;   
   --mark:#8a2a45;                                              
-  --star:#b48a3e;
+  --star:#cfaa5c;
   --top-bg:#f2e9dc; --top-ink:#5a4a4f;
   --hdr-bg:#fff; --hdr-ink:#2b2226; --hdr-line:#e8dfd3; --search-bg:#faf6f0;
   --ftr-bg:#f6efe5; --ftr-ink:#4a3c41; --ftr-line:#e3d6c5;
@@ -379,7 +379,7 @@ html.wh .whx .w-demo__b,html.wh .whx .w-demo__cmp,html.wh .whx .w-demo__info{dis
 html.wh .whx .w-demo__b:hover,html.wh .whx .w-demo__cmp:hover,html.wh .whx .w-demo__info:hover{border-color:rgba(255,255,255,.35)}
 html.wh .whx .w-demo__b.w-is-on{background:#fff;color:#1f191c}
 html.wh .whx .w-demo__sw{width:14px;height:14px;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-html.wh .whx .w-demo__sw--a{background:linear-gradient(135deg,#f2e9dc 50%,#a67d38 50%)}
+html.wh .whx .w-demo__sw--a{background:linear-gradient(135deg,#f2e9dc 50%,#c19a4a 50%)}
 html.wh .whx .w-demo__sw--b{background:linear-gradient(135deg,#c9a55e 50%,#7a1f35 50%)}
 html.wh .whx .w-demo__cmp,html.wh .whx .w-demo__info{border-left:1px solid rgba(255,255,255,.2)}
 html.wh .whx .w-never-preview .w-demo{display:none}
@@ -529,7 +529,7 @@ html.wh .whx .w-search{height:44px}
 html.wh .whx .w-search input{height:42px}
 html.wh .whx .w-logo{min-height:44px;justify-content:center}
 html.wh .whx .w-cart__x,html.wh .whx .w-drawer__head button{min-width:44px;min-height:44px}}
-html.wh{--gold:#c9a55e;--gold-d:#a67d38;--news-bg:#efe4e6;--news-ink:#2b2226}
+html.wh{--gold:#c9a55e;--gold-d:#c19a4a;--news-bg:#efe4e6;--news-ink:#2b2226}
 html.wh .whx .w-news{color:var(--news-ink);border:0}
 html.wh .whx .w-news .w-btn--cart{background:var(--accent);color:#fff}
 html.wh .whx .w-news__form{background:#fff;border-color:rgba(94,42,80,.25)}
@@ -1289,8 +1289,8 @@ html.wh .p-info-wrapper .w-buy .add-to-cart-button{min-width:0;white-space:nowra
 html.wh .p-image{position:relative;overflow:hidden}
 html.wh .p-image #wrap,html.wh .p-image a.p-main-image{display:block}
 html.wh .p-image img{max-height:640px}
-html.wh .w-gal__zoom{position:absolute;right:14px;bottom:14px;z-index:60;width:48px;height:48px;border-radius:50%;border:0;background:#b48a3e;color:#fff;box-shadow:0 4px 14px rgba(43,34,38,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-html.wh .w-gal__zoom:hover{background:#a67d38}
+html.wh .w-gal__zoom{position:absolute;right:14px;bottom:14px;z-index:60;width:48px;height:48px;border-radius:50%;border:0;background:#cfaa5c;color:#fff;box-shadow:0 4px 14px rgba(43,34,38,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+html.wh .w-gal__zoom:hover{background:#c19a4a}
 html.wh .w-gal__zoom svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
 html.wh .w-gal__nav{position:absolute;top:50%;z-index:60;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:1px solid var(--line-2);background:rgba(255,255,255,.92);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-size:0}
 html.wh .w-gal__nav:hover{background:#fff;border-color:var(--ink)}
@@ -1299,7 +1299,7 @@ html.wh .w-gal__nav--prev{left:12px}
 html.wh .w-gal__nav--next{right:12px}
 /* akční kolečko: zlaté, menší */
 html.wh .p-image .flags-extra{top:12px!important;left:12px!important;right:auto!important}
-html.wh body .p-image .flags .flag.flag-discount{box-sizing:border-box!important;width:52px!important;height:52px!important;min-height:0!important;max-height:52px!important;aspect-ratio:1!important;min-width:0!important;padding:0!important;border-radius:50%!important;background:#b48a3e!important;color:#fff!important;border:0!important;box-shadow:none!important;display:flex!important;align-items:center;justify-content:center;text-align:center;transform:none!important}
+html.wh body .p-image .flags .flag.flag-discount{box-sizing:border-box!important;width:52px!important;height:52px!important;min-height:0!important;max-height:52px!important;aspect-ratio:1!important;min-width:0!important;padding:0!important;border-radius:50%!important;background:#cfaa5c!important;color:#fff!important;border:0!important;box-shadow:none!important;display:flex!important;align-items:center;justify-content:center;text-align:center;transform:none!important}
 html.wh .p-image .flag.flag-discount .price-standard{display:none!important}
 html.wh .p-image .flag.flag-discount .price-save{display:block!important;color:#fff!important;font-size:16px!important;font-weight:500;line-height:1;margin:0!important;padding:0!important;background:none!important}
 /* recenze: o něco nižší sekce */
