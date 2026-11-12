@@ -1340,3 +1340,5 @@ html.wh .whx .w-pdmore .w-sec__more,html.wh .whx .w-pdmore .sec__more{position:r
 html.wh .whx .w-rail--prod .w-rail__track{padding-bottom:250px;margin-bottom:-250px;pointer-events:none}
 html.wh .whx .w-rail--prod .w-rail__track>*{pointer-events:auto}
 html.wh .whx .w-rail--prod{z-index:5}
+html.wh .whx .w-rail--prod .w-rail__b{top:calc(50% - 125px)}
+@media(hover:none){html.wh .whx .w-rail--prod .w-rail__track{padding-bottom:0;margin-bottom:0}html.wh .whx .w-rail--prod .w-rail__b{top:50%}}
