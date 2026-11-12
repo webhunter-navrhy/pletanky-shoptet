@@ -1002,6 +1002,17 @@
       if (bp) { $$('.p-prev,.p-next', bp).forEach(function (a) { rhi.appendChild(a); }); }
       (function () {
         var grid = $('.products-related', rh.parentNode) || $('.products-related'); if (!grid) return;
+        (function () {
+          var its = $$('.product', grid); if (its.length < 2) return;
+          var g2 = D.createElement('div'); g2.className = 'w-pgrid products';
+          its.forEach(function (it) { it.style.display = ''; it.classList.remove('col-sm-6', 'col-md-12', 'col-lg-6'); g2.appendChild(it); });
+          cards(g2);
+          var ph2 = D.createElement('span'); grid.parentNode.insertBefore(ph2, grid); grid.style.display = 'none';
+          ph2.replaceWith(rail(g2, { c: 'w-rail--prod' }));
+          var bp2 = $('.browse-p'); if (bp2) bp2.style.display = 'none';
+          $$('.p-prev,.p-next', rhi).forEach(function (x) { x.style.display = 'none'; });
+        })();
+        return;
         var items = $$('.product', grid), off = 0, vis = 0;
         items.forEach(function (it) { if (getComputedStyle(it).display !== 'none') vis++; });
         if (!vis || items.length <= vis) return;
@@ -1038,10 +1049,10 @@
       getDoc(cat.h).then(function (doc) {
         var ps = $$('#products .product', doc).filter(function (x) { var a = x.querySelector('a.name, a.image'); return a && a.getAttribute('href') !== me; });
         var avail = ps.filter(function (x) { return /skladem/i.test(txt(x.querySelector('.availability'))); });
-        ps = (avail.length >= 4 ? avail : ps).slice(0, 4);
+        ps = (avail.length >= 8 ? avail : ps).slice(0, 12);
         if (!ps.length) { holder.remove(); return; }
         var g = D.createElement('div'); g.className = 'w-pgrid products'; g.innerHTML = ps.map(function (x) { return x.outerHTML; }).join(''); cards(g);
-        holder.querySelector('.w-slot').replaceWith(g);
+        var sl = holder.querySelector('.w-slot') || holder.querySelector('.w-pgrid'); var ph = D.createElement('span'); (sl || holder).appendChild(ph); if (sl) { sl.replaceWith(ph); } ph.replaceWith(rail(g, { c: 'w-rail--prod' }));
       }).catch(function () { holder.remove(); });
     }
   }
