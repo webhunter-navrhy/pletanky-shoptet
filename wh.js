@@ -1008,7 +1008,7 @@
           its.forEach(function (it) { it.style.display = ''; it.classList.remove('col-sm-6', 'col-md-12', 'col-lg-6'); g2.appendChild(it); });
           cards(g2);
           var ph2 = D.createElement('span'); grid.parentNode.insertBefore(ph2, grid); grid.style.display = 'none';
-          ph2.replaceWith(rail(g2, { c: 'w-rail--prod' }));
+          ph2.replaceWith(rail(g2, { c: 'w-rail--prod whx' }));
           var bp2 = $('.browse-p'); if (bp2) bp2.style.display = 'none';
           $$('.p-prev,.p-next', rhi).forEach(function (x) { x.remove(); });
         })();
