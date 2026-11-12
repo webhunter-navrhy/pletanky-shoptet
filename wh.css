@@ -1320,8 +1320,8 @@ html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-additional,html.wh 
 @media(hover:hover){html.wh .whx .w-pc__lead{display:none}}
 /* dlaždice na počítači: nižší fotka a hustší panel, aby rozbalení vešlo na displej včetně tlačítka Do košíku */
 @media(hover:hover){
-html.wh .whx .products .w-pc__img{aspect-ratio:4/3}
-html.wh .whx .products .w-pc__img img{aspect-ratio:auto;height:100%;object-fit:contain;padding:6px;background:#fff}
+html.wh body .products .w-pc__img{aspect-ratio:4/3}
+html.wh body .products .w-pc__img img{aspect-ratio:auto;height:100%;object-fit:contain;padding:6px;background:#fff}
 html.wh .whx .w-pc__more{padding:2px 18px 14px}
 html.wh .whx .w-pc__specs{margin:0 0 8px}
 html.wh .whx .w-pc__specs div{padding:4px 0}
