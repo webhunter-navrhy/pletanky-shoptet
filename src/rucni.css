@@ -682,3 +682,12 @@ html.wh .whx .w-rvs__score{font-size:40px;margin:0 0 4px}
 html.wh .whx .w-rvs__cnt{margin:4px 0 8px}
 html.wh .whx .w-rvs__dist{margin:0 0 8px}
 html.wh .whx .w-rvs__grid--rail>.w-rv{padding:14px 16px 12px;gap:8px}
+
+/* ===== 9. kolo (12. 11. 2026): cena v detailu – původní cena a sleva nahoře, aktuální cena pod nimi; světlejší zlatá ===== */
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-standard{order:1;font-size:16px}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-save{order:2;font-size:14px;font-weight:600;color:#7a5a14;background:#f1e2bd;border-radius:4px;padding:1px 7px}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-final{order:3;flex:0 0 100%}
+html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-additional,html.wh .p-info-wrapper .w-buy .p-final-price-wrapper .price-measure{order:4;flex:0 0 100%}
+/* rozbalená dlaždice produktu: jen parametry, bez dlouhého popisku, ať je vidět tlačítko Do košíku */
+@media(hover:hover){html.wh .whx .w-pc__lead{display:none}}
