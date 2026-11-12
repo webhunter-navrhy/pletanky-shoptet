@@ -1010,7 +1010,7 @@
           var ph2 = D.createElement('span'); grid.parentNode.insertBefore(ph2, grid); grid.style.display = 'none';
           ph2.replaceWith(rail(g2, { c: 'w-rail--prod' }));
           var bp2 = $('.browse-p'); if (bp2) bp2.style.display = 'none';
-          $$('.p-prev,.p-next', rhi).forEach(function (x) { x.style.display = 'none'; });
+          $$('.p-prev,.p-next', rhi).forEach(function (x) { x.remove(); });
         })();
         return;
         var items = $$('.product', grid), off = 0, vis = 0;
